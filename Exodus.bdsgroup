@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<PersonalityInfo>
+		<Option>
+			<Option Name="Personality">Default.Personality</Option>
+			<Option Name="ProjectType"></Option>
+			<Option Name="Version">1.0</Option>
+			<Option Name="GUID">{56F496EE-991D-4A5B-8210-C96F36161906}</Option>
+		</Option>
+	</PersonalityInfo>
+	<Default.Personality>  <Projects>
+      <Projects Name="Exodus.exe">exodus\Exodus.bdsproj</Projects>
+      <Projects Name="Generator.exe">COMGuiGenerator\Generator.bdsproj</Projects>
+      <Projects Name="ExImportAIM.dll">exodus\plugins\AIM-Import\ExImportAIM.bdsproj</Projects>
+      <Projects Name="ExAspell.dll">exodus\plugins\ASpeller\ExAspell.bdsproj</Projects>
+      <Projects Name="ExHTMLLogger.dll">exodus\plugins\HTMLLogger\ExHTMLLogger.bdsproj</Projects>
+      <Projects Name="ExNetMeeting.dll">exodus\plugins\NetMeeting\ExNetMeeting.bdsproj</Projects>
+      <Projects Name="ExRosterTools.dll">exodus\plugins\RosterTools\ExRosterTools.bdsproj</Projects>
+      <Projects Name="TestPlugin.dll">exodus\plugins\Test\TestPlugin.bdsproj</Projects>
+      <Projects Name="Targets">Exodus.exe Generator.exe ExImportAIM.dll ExAspell.dll ExHTMLLogger.dll ExNetMeeting.dll ExRosterTools.dll TestPlugin.dll</Projects>
+    </Projects>
+    <Dependencies/>
+  </Default.Personality>
+</BorlandProject>

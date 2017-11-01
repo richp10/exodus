@@ -1,0 +1,161 @@
+===============================================================================
+
+I'll need to write a small help-file eventually.
+In the meantime this'll have to do.... :)
+
+===============================================================================
+
+Installation: read INSTALL.txt
+
+Distribution: read REDIST.txt and LIBMNG_DLL.txt
+
+License info: read LICENSE.txt and check NGImages.pas header comments
+
+===============================================================================
+
+Compiler options:
+
+You can toggle the $DEFINE's at the top of NGDefs.inc to enable/disable one or
+more of the optional components in the package.
+
+Windows: libmng.dll contains everything to display PNG, JNG, MNG and JPEG files,
+as well as handle any zlib functionality.
+
+Linux: libmng.so contains everything to display PNG, JNG & MNG files.
+(JPEG and zlib functionality are supplied by their respective libraries)
+
+Turning the options (which is the default) on will hardly increase the size of
+your executable! But if you prefer to use other libraries (eg. PNG or JPEG),
+you can disable their support here.
+
+Windows: if you are already using the 'standard' TJPEGImage it's a snap to
+switch to the implementation in NGImage.pas *and* it will save you about 75KB
+on the size of your executable!!!
+
+Note: the PNG decoder in libmng has been reported to be fairly faster than
+most other (native) Delphi-based PNG decoders.
+
+===============================================================================
+
+Displaying PNG, JNG, MNG:
+
+// Image1 : TImage;                       // defined on form
+
+procedure Form1.Display;
+var NG : TNGImage;
+begin
+  NG := TNGImage.Create;
+  try
+    NG.LoadFromFile('somefile.mng');      // select one...
+//    NG.LoadFromFile('somefile.png');
+//    NG.LoadFromFile('somefile.jng');
+    Image1.Picture.Assign(NG);
+  finally
+    NG.Free;
+  end;
+end;
+
+===============================================================================
+
+Displaying MNG with status-control:
+
+// Image1 : TImage;                       // defined on form
+// BtnPause : TButton;
+// BtnPlay : TButton;
+// procedure StatusChange(sender: TOBject);
+
+procedure Form1.Display;
+var NG : TNGImage;
+begin
+  NG := TNGImage.Create;
+  try
+    NG.LoadFromFile('somefile.mng');
+    Image1.Picture.Assign(NG);
+    TNGImage(Image1.Picture.Graphic).OnStatusChange := StatusChange;
+    StatusChange(nil);
+  finally
+    NG.Free;
+  end;
+end;
+
+procedure Form1.StatusChange;
+begin
+  BtnPause.Enabled := TNGImage(Image1.Picture.Graphic).StatusRunning;
+  BtnPlay.Enabled := not BtnPause.Enabled;
+end;
+
+===============================================================================
+
+Displaying JPEG:
+
+Just use TJPEGImage like you would otherwise
+
+===============================================================================
+
+Writing PNG:
+
+procedure BMP2PNG(Bitmap: TBitmap; Filename: string);
+var NG : TNGImage;
+begin
+  NG := TNGImage.Create;
+  try
+    NG.Assign (Bitmap);
+    NG.SaveToPNGfile (Filename);
+  finally
+    NG.Free;
+  end;
+end;
+
+===============================================================================
+
+Writing JNG:
+
+procedure BMP2JNG(Bitmap: TBitmap; Filename: string);
+var NG : TNGImage;
+begin
+  NG := TNGImage.Create;
+  try
+    NG.Assign(Bitmap);
+    NG.SaveToJNGfile(Filename);
+  finally
+    NG.Free;
+  end;
+end;
+
+===============================================================================
+
+Writing PNG with alpha:
+
+procedure BMP2PNGA (Bitmap: TBitmap; Color: TColor; Filename: string);
+var NG : TNGImage;
+begin
+  NG := TNGImage.Create;
+  try
+    NG.Assign(Bitmap);
+    NG.SetAlphaColor(Color);           // set single transparent color
+//    NG.SetAlphaBitmap(SomeBitmap);     // set complete alpha-channel
+    NG.SaveToPNGfile(Filename);
+  finally
+    NG.Free;
+  end;
+end;
+
+===============================================================================
+
+Writing JNG with alpha:
+
+procedure BMP2JNGA (Bitmap: TBitmap; Color: TColor; Filename: string);
+var NG : TNGImage;
+begin
+  NG := TNGImage.Create;
+  try
+    NG.Assign(Bitmap);
+    NG.SetAlphaColor(Color);           // set single transparent color
+//    NG.SetAlphaBitmap(SomeBitmap);     // set complete alpha-channel
+    NG.SaveToJNGfile(Filename);
+  finally
+    NG.Free;
+  end;
+end;
+
+===============================================================================

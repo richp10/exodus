@@ -1,0 +1,38 @@
+EXODUS ROADMAP:
+==================================
+0.9.1 -- May 1, 2005
+    - Basic Avatar support
+    - JEP-50 Ad-Hoc commands support
+    - New plugin based logging. SQLite and HTML plugins available.
+    - Fixed many file transfer bugs
+    - Queued chats for offline msgs or if the user is DND
+    - Better and quicker xdata form rendering
+    - Display multiple resources in roster tooltips.
+    - GUI improvements
+    - Better MUC support and GUIs
+    - Better Disco support
+    - Set presence when screensaver turns on or term is locked.
+    - Initial support for custom emoticons
+    - Use stringprep for all jabber id objects.
+    - Add support for xmpp:, im:, and pres: URI schemes
+
+
+0.9.2 --
+    - Finish custom emoticons (ZIP files, etc..)
+    - Privacy list supportort
+    - Customizable toolbar
+    - PNG support for avatars + emoticons
+
+
+1.0 -- ???
+    - xhtml messags
+    - online help
+    - solid plugin API
+    - e2e (if we have a spec)
+    - pubsub support (with some kind of generic UI)
+    - multiple accounts
+    - enhanced debugger
+
+1.1 -- ???
+
+        

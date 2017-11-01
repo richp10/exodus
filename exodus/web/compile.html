@@ -1,0 +1,98 @@
+<html>
+<head>
+<title>Exodus - Escape from Proprietary Instant Messaging</title>
+
+<style type="text/css">
+
+<!--
+    body {
+            background-color: #FFFFFF;
+            font-family: Arial, Helvetica;
+            font-size: 10pt;
+            margin-bottom: 5px;
+            margin-top: 5px;
+            margin-left: 5px;
+            margin-right: 5px;
+          }
+    div {margin-top: 10px;}
+    .title { font-size: 16pt; font-weight: bold }
+-->
+
+</style>
+
+</head>
+
+<body bgcolor="white">
+
+<center>
+<a href="http://exodus.jabberstudio.org"><img src="exodus-logo.png" align="center" /></a>
+<hr>
+<table border="0">
+<tr>
+<td><a href="http://www.jabberstudio.org/projects/exodus/releases/">Downloads</a> | </td>
+<td><a href="shots.html">Screenshots</a> | </td>
+<td><a href="http://www.jabberstudio.org/projects/exodus/bugs/">Bugs</a> | </td>
+<td><a href="http://www.jabberstudio.org/projects/exodus/features/">Feature Requests</a> | </td>
+<td><a href="http://www.jabberstudio.org/cgi-bin/viewcvs.cgi/exodus">Subversion</a></td>
+</tr>
+</table>
+
+<hr />
+
+<span style="font-size: -2;">
+<a href="branding.html">Branding</a> |
+<a href="./plugin-docs/index.html">Plugin Documentation</a> |
+<a href="./translations.html">Translating Exodus </a> |
+<a href="./compile.html">Compiling Source</a>
+</span>
+
+</center>
+<hr>
+
+<!-- PAGE CONTENT -->
+
+<ol>
+<li>Install <a href="http://www.borland.com/delphi">Borland Developer Studio</a> 2006.</li>
+<li>Install the Jedi Code Library from <a href="http://sourceforge.net/project/showfiles.php?group_id=47514">here.</a> Use at least release 1.97 for BDS2006.</li>
+<li>Install and setup <a href="http://subversion.tigris.org">Subversion</a>.</li>
+<li>Checkout the Exodus source code
+    <ul>
+    <li>If you have an ssh account on jabberstudio.org, use:
+        <p><code>svn co svn+ssh://username@svn.jabberstudio.org/var/projects/exodus/svn/trunk exodus</code></p>
+    </li>
+    <li>If you want to do anonymous checkouts, use:
+        <p><code>svn co svn://svn.jabberstudio.org/exodus/svn/trunk exodus</code></p>
+    </li>
+    </ul>
+</li>
+    
+<li>Unzip tntUnicode.zip from the Exodus\Exodus\Components directory.</li>
+<li>Open Exodus\Exodus\Components\tntUnicode\Packages\BDS4\TntUnicodeVCL_Design.bdsproj</li>
+<li>From the Project Manager, Right click, and select Install.</li>
+<li>Open Exodus\Exodus\Components\ExComponents.dpk</li>
+<li>From the Project Manager, Right click, and select Install.</li>
+<li>Open Exodus\Exodus.dpr</li>
+<li>Click "Build Exodus"</li>
+</ol>
+
+<!--  --------- FOOTER --- -->
+<div style="text-align: center; margin-top: 30px;">
+<a href="http://www.jabberpowered.org"><img src="jabber-powered-20.png" border="0"></a>
+</div>
+
+<hr>
+<table width="100%" border="0">
+<tr><td>
+<span style="font-size: 75%">
+Copyright &nbsp; Peter Millard, 2000 - 2006<br />
+Jabber&trade; is a Trademark of <a href="http://www.jabber.com">Jabber, Inc.</a>
+</span>
+<td align="right">
+<span style="font-size: 75%; text-align: right">
+Comments, bad links, etc can be directed <a href="mailto:pgmillard@jabber.org">here</a>
+</span>
+</td></tr></table>
+
+</body>
+</html>
+

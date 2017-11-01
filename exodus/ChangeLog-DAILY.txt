@@ -1,0 +1,123 @@
+2004-08-31 13:26  pgmillard
+
+	* exodus/: default.po, version.h, version.nsi: daily build
+
+2004-08-30 15:59  llong
+
+	* exodus/locale/fr/LC_MESSAGES/default.po: Updated from
+	  translator's post to exodus-dev dated 2004/08/27 to synchronize
+	  with version 1.138 of the main default.po (Just updates from last
+	  PO file.)
+
+2004-08-30 11:22  pgmillard
+
+	* exodus/: MsgDisplay.pas, RTFMsgList.dfm, default.po,
+	  components/ExRichEdit.pas: Tweaks to reduce flashing in the
+	  new-world-order.
+
+2004-08-30 08:57  pgmillard
+
+	* exodus/RTFMsgList.dfm: Remove left margin that somehow got into
+	  the RichEdit view.
+
+2004-08-30 08:24  pgmillard
+
+	* release.pl, todo.txt, exodus/Exodus.dpr, exodus/Jabber1.pas,
+	  exodus/default.po, exodus/exodus-new.nsi,
+	  exodus/plugins/AIM-Import/ExodusCOM_TLB.pas,
+	  exodus/plugins/ASpeller/ExodusCOM_TLB.pas,
+	  exodus/plugins/HTMLLogger/ExodusCOM_TLB.pas,
+	  exodus/plugins/ICQ-Import/ExodusCOM_TLB.pas,
+	  exodus/plugins/JabberStats/ExodusCOM_TLB.pas,
+	  exodus/plugins/NetMeeting/ExodusCOM_TLB.pas,
+	  exodus/plugins/RosterTools/ExodusCOM_TLB.pas,
+	  exodus/plugins/SQLLogger/ExodusCOM_TLB.pas: Remove test dialog,
+	  and fixup install script.
+
+2004-08-29 19:12  pgmillard
+
+	* jopl/jabber.c: Add stringprep compat layer to cvs.
+
+2004-08-29 19:08  pgmillard
+
+	* exodus/RTFMsgList.pas: [no log message]
+
+2004-08-29 19:04  pgmillard
+
+	* exodus/exodus-new.nsi: Bug #4141 - Do not do any shell stuff if
+	  installing with silent mode.
+
+2004-08-29 18:57  pgmillard
+
+	* exodus/RTFMsgList.pas: Bug #4208 - Allow Ctrl-V in msg history
+	  window for paste.
+
+2004-08-29 18:42  pgmillard
+
+	* exodus/: RoomAdminList.dfm, RoomAdminList.pas: Bug #4218 - Use
+	  correct namespace when changing owner list and admin list in MUC
+	  rooms.
+
+2004-08-29 18:32  pgmillard
+
+	* jopl/: ChatController.pas, Session.pas: Bug #4217 - Ensure that
+	  chat controllers which are in memory don't get freed while
+	  auto-away.
+
+2004-08-29 18:09  pgmillard
+
+	* exodus/: BaseChat.dfm, BaseChat.pas, ChatWin.dfm, ChatWin.pas,
+	  Dockable.dfm, Dockable.pas, ExUtils.pas, Exodus.dof, Exodus.dpr,
+	  Exodus.tlb, ExodusCOM_TLB.pas, IEMsgList.dfm, IEMsgList.pas,
+	  Jabber1.pas, MsgDisplay.pas, RTFMsgList.dfm, RTFMsgList.pas,
+	  Room.pas, components/ExRichEdit.pas, components/RichEdit2.pas:
+	  Bug #4205 - Tons of vertical scrolling stuff tweaked/fixed.
+	  Things should all be working, but may be slightly unstable.
+
+2004-08-26 06:59  pgmillard
+
+	* jopl/EntityCache.pas: Bug #4207 - Correctly clear the entity
+	  cache. This is harder than it ought to be since entities remove
+	  themselves from the cache.
+
+2004-08-25 20:25  pgmillard
+
+	* exodus/ExUtils.pas, jopl/EntityCache.pas: Bug #4197 - Take error
+	  case into account when centering windows.
+
+2004-08-23 14:10  hildjj
+
+	* exodus/Room.pas: Make /me work in rooms again
+
+2004-08-20 14:06  hildjj
+
+	* exodus/Room.pas: Use the subject element, not the /me for subject
+	  change nofitications.  This is i18n, as well as jep-45 suggests
+	  that clients SHOULD NOT send /me's.
+
+2004-08-17 18:08  llong
+
+	* exodus/locale/pt_PT/LC_MESSAGES/default.po: Translated the new
+	  strings to synchronize with version 1.138 of the main default.po
+
+2004-08-16 22:42  pgmillard
+
+	* exodus/: Jabber1.dfm, Jabber1.pas: Bug #3867 - Add a message
+	  telling users to enable a logging plugin.
+
+2004-08-16 20:43  pgmillard
+
+	* exodus/exodus-new.nsi: Bug #4168 - Twiddle branding bit in
+	  installer script.
+
+2004-08-16 20:39  pgmillard
+
+	* exodus/Browser.dfm, exodus/Browser.pas, jopl/EntityCache.pas: Bug
+	  #4160 - Clear the entity cache differently. The old way looked
+	  perfectly fine, but getting several cores. Weird.
+
+2004-08-16 13:54  hildjj
+
+	* exodus/Room.pas: Don't notify on non-subject change messages from
+	  the room, including presence changes, etc.
+

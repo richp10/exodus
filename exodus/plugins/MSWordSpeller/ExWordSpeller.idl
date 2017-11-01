@@ -1,0 +1,29 @@
+[
+  uuid(ff77aaa2-d5ec-49de-a43b-cb2a62459ab2), 
+  version(1.0), 
+  helpstring("WordSpeller Library")
+]
+library WordSpeller
+{
+
+  importlib("Exodus.exe");
+  importlib("stdole2.tlb");
+
+  [
+    uuid(96872567-d77f-4a1a-b4d1-e3874371d2ac), 
+    version(1.0)
+  ]
+  coclass WordSpeller
+  {
+    [default] interface IExodusPlugin;
+  };
+
+ [
+    uuid(685d8303-ba97-45a2-a5cc-b90480ed2feb), 
+    version(1.0)
+  ]
+  coclass ChatSpeller
+  {
+    [default] interface IExodusChatPlugin;
+  };
+};

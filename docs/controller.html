@@ -1,0 +1,256 @@
+<html>
+<title>Exodus Plugin Interfaces - </title>
+<style>
+body { font-family: Tahoma, Arial, Helvetica</dt></a> }
+</style>
+
+<body>
+
+<center>
+<a href="http://exodus.jabberstudio.org">
+<img src="..\exodus\web\exodus-logo.png" border="0"/>
+</a>
+<hr>
+<div style="font-size:20pt</dt></a> font-weight: bold</dt></a>">Exodus Plugin Interfaces - IExodusController</div>
+</center>
+<hr>
+
+<!--
+    property Connected: WordBool readonly dispid 1;
+    property Username: WideString readonly dispid 2;
+    property Server: WideString readonly dispid 3;
+    function RegisterCallback(const xpath: WideString; const callback: IExodusPlugin): Integer; dispid 4;
+    procedure UnRegisterCallback(ID: Integer); dispid 5;
+    procedure Send(const xml: WideString); dispid 6;
+    function isRosterJID(const jid: WideString): WordBool; dispid 7;
+    function isSubscribed(const jid: WideString): WordBool; dispid 8;
+    procedure ChangePresence(const Show: WideString; const Status: WideString; Priority: Integer); dispid 11;
+    procedure StartChat(const jid: WideString; const resource: WideString;
+                        const nickname: WideString); dispid 12;
+    procedure GetProfile(const jid: WideString); dispid 13;
+    procedure CreateDockableWindow(HWND: Integer; const Caption: WideString); dispid 16;
+    function addPluginMenu(const Caption: WideString): WideString; dispid 14;
+    procedure removePluginMenu(const ID: WideString); dispid 15;
+    procedure monitorImplicitRegJID(const JabberID: WideString; FullJID: WordBool); dispid 17;
+    procedure getAgentList(const Server: WideString); dispid 18;
+    function getAgentService(const Server: WideString; const Service: WideString): WideString; dispid 19;
+    function generateID: WideString; dispid 20;
+    function isBlocked(const JabberID: WideString): WordBool; dispid 21;
+    procedure Block(const JabberID: WideString); dispid 22;
+    procedure UnBlock(const JabberID: WideString); dispid 23;
+    property resource: WideString readonly dispid 24;
+    property Port: Integer readonly dispid 25;
+    property Priority: Integer readonly dispid 26;
+    property PresenceStatus: WideString readonly dispid 28;
+    property PresenceShow: WideString readonly dispid 29;
+    property IsPaused: WordBool readonly dispid 30;
+    property IsInvisible: WordBool readonly dispid 31;
+    procedure Connect; dispid 32;
+    procedure Disconnect; dispid 33;
+    function getPrefAsString(const Key: WideString): WideString; dispid 34;
+    function getPrefAsInt(const Key: WideString): Integer; dispid 35;
+    function getPrefAsBool(const Key: WideString): WordBool; dispid 36;
+    procedure setPrefAsString(const Key: WideString; const Value: WideString); dispid 37;
+    procedure setPrefAsInt(const Key: WideString; Value: Integer); dispid 38;
+    procedure setPrefAsBool(const Key: WideString; Value: WordBool); dispid 39;
+    function findChat(const JabberID: WideString; const resource: WideString): Integer; dispid 40;
+    procedure startSearch(const SearchJID: WideString); dispid 41;
+    procedure startRoom(const RoomJID: WideString; const nickname: WideString;
+                        const Password: WideString); dispid 42;
+    procedure startInstantMsg(const JabberID: WideString); dispid 43;
+    procedure startBrowser(const BrowseJID: WideString); dispid 44;
+    procedure showJoinRoom(const RoomJID: WideString; const nickname: WideString;
+                           const Password: WideString); dispid 45;
+    procedure showPrefs; dispid 46;
+    procedure showCustomPresDialog; dispid 47;
+    procedure showDebug; dispid 48;
+    procedure showLogin; dispid 49;
+    procedure showToast(const Message: WideString; wndHandle: Integer; imageIndex: Integer); dispid 50;
+    procedure setPresence(const Show: WideString; const Status: WideString; Priority: Integer); dispid 51;
+    property Roster: IExodusRoster readonly dispid 54;
+    property PPDB: IExodusPPDB readonly dispid 55;
+    function registerBrowseNS(const Namespace: WideString): WideString; dispid 9;
+    function registerDiscoItem(const JabberID: WideString; const Name: WideString): WideString; dispid 10;
+    function registerDiscoFeature(const Feature: WideString): WideString; dispid 27;
+    procedure removeBrowseNS(const ID: WideString); dispid 52;
+    procedure removeDiscoItem(const ID: WideString); dispid 53;
+    procedure removeDiscoFeature(const ID: WideString); dispid 56;
+    function registerPresenceXML(const xml: WideString): WideString; dispid 57;
+    procedure removePresenceXML(const ID: WideString); dispid 58;
+    procedure trackWindowsMsg(Message: Integer); dispid 59;
+    function addContactMenu(const Caption: WideString): WideString; dispid 60;
+    procedure removeContactMenu(const ID: WideString); dispid 61;
+    function getActiveContact: WideString; dispid 62;
+    function getActiveGroup: WideString; dispid 63;
+    function getActiveContacts(Online: WordBool): WideString; dispid 65;
+    property LocalIP: WideString readonly dispid 64;
+    procedure setPluginAuth(const AuthAgent: IExodusAuth); dispid 66;
+    procedure setAuthenticated(Authed: WordBool; const xml: WideString); dispid 67;
+    procedure setAuthJID(const Username: WideString; const Host: WideString;
+                         const resource: WideString); dispid 68;
+    function addMessageMenu(const Caption: WideString): WideString; dispid 201;
+
+-->
+
+
+<!-- ----------------------------------------------------- -->
+<h1>Properties</h1>
+<hr>
+
+<dl>
+<a name="connected"><dt>Connected [Boolean]</dt></a>
+<dd>Is the client currently connected to a jabber server?</dd>
+
+<a name="username"><dt>Username [BSTR]</dt></a>
+<dd></dd>
+
+<a name="server"><dt>Server [BSTR]</dt></a>
+<dd></dd>
+
+<a name="resource"><dt>Resource [BSTR]</dt></a>
+<dd></dd>
+
+<a name="port"><dt>Port [Integer]</dt></a>
+<dd></dd>
+
+<a name="priority"><dt>Priority [Integer]</dt></a>
+<dd></dd>
+
+<a name="ispaused"><dt>IsPaused [Boolean]</dt></a>
+<dd></dd>
+
+<a name="isinvisible"><dt>IsInvisible [Boolean]</dt></a>
+<dd></dd>
+
+<a name="localip"><dt>LocalIP [BSTR]</dt></a>
+<dd></dd>
+
+<a name="roster"><dt>Roster [IExodusRoster]</dt></a>
+<dd></dd>
+
+<a name="ppdb"><dt>PPDB [IExodusPPDB]</dt></a>
+<dd></dd>
+</dl>
+
+<!-- ------------------------------------------------------------- -->
+<h1>XML Stream Methods</h1>
+<dl>
+<a name="registercallback"><dt>RegisterCallback(BSTR xpath, IExodusPlugin callback): BSTR</dt></a>
+<dd>
+</dd>
+
+<a name="unregistercallback"><dt>UnRegisterCallback(BSTR ID)</dt></a>
+<dd>
+</dd>
+
+<a name="send"><dt>Send(BSTR XML)</dt></a>
+<dd>
+</dd>
+
+<a name="generateID"><dt>GenerateID: BSTR</dt></a>
+<dd>
+</dd>
+</dl>
+
+<!-- ------------------------------------------------------------- -->
+<h1>Profile and Connection Methods</h1>
+<dl>
+<a name="connect"><dt>Connect()</dt></a>
+<dd>
+</dd>
+
+<a name="disconnect"><dt>Disconnect()</dt></a>
+<dd>
+</dd>
+
+<a name="getprofile"><dt>GetProfile(BSTR WideString)</dt></a>
+<dd>
+</dd>
+
+<a name=""><dt></dt></a>
+<dd>
+</dd>
+
+<a name=""><dt></dt></a>
+<dd>
+</dd>
+
+<!-- Plugin Auth stuff -->
+procedure setPluginAuth(const AuthAgent: IExodusAuth); dispid 66;
+procedure setAuthenticated(Authed: WordBool; const xml: WideString); dispid 67;
+procedure setAuthJID(const Username: WideString; const Host: WideString;
+                     const resource: WideString); dispid 68;
+
+
+<!-- Modify presence -->
+procedure ChangePresence(const Show: WideString; const Status: WideString; Priority: Integer); dispid 11;
+procedure setPresence(const Show: WideString; const Status: WideString; Priority: Integer); dispid 51;
+
+<!-- Show GUI's -->
+procedure StartChat(const jid: WideString; const resource: WideString;
+                    const nickname: WideString); dispid 12;
+procedure startSearch(const SearchJID: WideString); dispid 41;
+procedure startRoom(const RoomJID: WideString; const nickname: WideString;
+                    const Password: WideString); dispid 42;
+procedure startInstantMsg(const JabberID: WideString); dispid 43;
+procedure startBrowser(const BrowseJID: WideString); dispid 44;
+procedure showJoinRoom(const RoomJID: WideString; const nickname: WideString;
+                       const Password: WideString); dispid 45;
+procedure showPrefs; dispid 46;
+procedure showCustomPresDialog; dispid 47;
+procedure showDebug; dispid 48;
+procedure showLogin; dispid 49;
+procedure showToast(const Message: WideString; wndHandle: Integer; imageIndex: Integer); dispid 50;
+function findChat(const JabberID: WideString; const resource: WideString): Integer; dispid 40;
+
+<!-- Scary things -->
+procedure CreateDockableWindow(HWND: Integer; const Caption: WideString); dispid 16;
+procedure trackWindowsMsg(Message: Integer); dispid 59;
+
+
+<!-- Block stuff -->
+procedure Block(const JabberID: WideString); dispid 22;
+procedure UnBlock(const JabberID: WideString); dispid 23;
+function isBlocked(const JabberID: WideString): WordBool; dispid 21;
+
+<!-- Roster stuff -->
+function isRosterJID(const jid: WideString): WordBool; dispid 7;
+function isSubscribed(const jid: WideString): WordBool; dispid 8;
+function getActiveContact: WideString; dispid 62;
+function getActiveGroup: WideString; dispid 63;
+function getActiveContacts(Online: WordBool): WideString; dispid 65;
+
+
+<!-- Menu stuff -->
+function addPluginMenu(const Caption: WideString): WideString; dispid 14;
+function addContactMenu(const Caption: WideString): WideString; dispid 60;
+function addMessageMenu(const Caption: WideString): WideString; dispid 201;
+procedure removePluginMenu(const ID: WideString); dispid 15;
+procedure removeContactMenu(const ID: WideString); dispid 61;
+
+
+<!-- Prefs -->
+function getPrefAsString(const Key: WideString): WideString; dispid 34;
+function getPrefAsInt(const Key: WideString): Integer; dispid 35;
+function getPrefAsBool(const Key: WideString): WordBool; dispid 36;
+procedure setPrefAsString(const Key: WideString; const Value: WideString); dispid 37;
+procedure setPrefAsInt(const Key: WideString; Value: Integer); dispid 38;
+procedure setPrefAsBool(const Key: WideString; Value: WordBool); dispid 39;
+
+<!-- Auto-response stuff -->
+function registerBrowseNS(const Namespace: WideString): WideString; dispid 9;
+function registerDiscoItem(const JabberID: WideString; const Name: WideString): WideString; dispid 10;
+function registerDiscoFeature(const Feature: WideString): WideString; dispid 27;
+function registerPresenceXML(const xml: WideString): WideString; dispid 57;
+procedure removeBrowseNS(const ID: WideString); dispid 52;
+procedure removeDiscoItem(const ID: WideString); dispid 53;
+procedure removeDiscoFeature(const ID: WideString); dispid 56;
+procedure removePresenceXML(const ID: WideString); dispid 58;
+
+<!-- Agents list stuff -->
+function getAgentService(const Server: WideString; const Service: WideString): WideString; dispid 19;
+procedure getAgentList(const Server: WideString); dispid 18;
+procedure monitorImplicitRegJID(const JabberID: WideString; FullJID: WordBool); dispid 17;
+
+</body>
+</html>

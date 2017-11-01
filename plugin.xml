@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<!--
+    Copyright 2006, Joe Hildebrand
+
+    This file is part of Exodus.
+
+    Exodus is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    Exodus is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Exodus; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+-->
+<project name="plugin" basedir="." default="all">
+  <fileset dir="${basedir}" id="dpr">
+    <include name="*.dpr"/>
+  </fileset>
+  <pathconvert refid="dpr" property="base">
+    <mapper type="regexp" from="\\([^\\]*)\.dpr" to="\1"/>
+  </pathconvert>
+
+  <pathconvert refid="dpr" property="bare">
+    <mapper type="regexp" from="\\Ex(.*)\.dpr" to="\1"/>
+  </pathconvert>
+
+  <condition property='HTMLLogger'>
+    <equals arg1="${bare}" arg2="HTMLLogger"/>
+  </condition>
+
+  <condition property='ICQ.includes' value="-U${basedir}\ICQ\Component">
+    <equals arg1="${bare}" arg2="ImportICQ"/>
+  </condition>
+  <property name="ICQ.includes" value=""/>
+
+  <condition property="make.dll">
+    <and>
+      <or>
+	<available file="${basedir}/plugin-info.nsh"/>
+	<isset property="HTMLLogger"/>
+      </or>
+      <isset property='bare'/>
+      <not>
+	<equals arg1='${bare}' arg2='' trim='true'/>
+      </not>
+    </and>
+  </condition>
+
+  <condition property="make.plugin">
+    <and>
+      <isset property='make.dll'/>
+      <not>
+	<isset property="HTMLLogger"/>
+      </not>
+    </and>
+  </condition>
+
+  <target name="dll" if='make.dll'>
+    <echo message='Making dll: ${base}'/>
+    <echo message='opts: ${opts.delphi}'/>
+    <echo message='opts: ${exodus.includes} ${ICQ.includes}'/>
+    <apply dir="." executable="${dcc}" verbose='true' failonerror="true">
+      <arg line="${exodus.includes} ${ICQ.includes}"/>
+      <arg line='${opts.delphi}'/>
+      <arg value="-E.."/>
+      <fileset refid="dpr"/>
+    </apply>
+
+    <zip basedir='${basedir}/..' destfile='${basedir}/../${base}.zip' includes='${base}.dll'/>
+  </target>
+
+  <target name="plugin" if='make.plugin'>
+    <echo message="Making Plugin: ${bare}"/>
+    <length file='${base}.dll' property='size'/>
+
+    <echo file="../plugin-sections-new.nsi" append="true">
+      Section /o "${base}" SEC_${bare}
+	  AddSize ${size}
+	  Push "${base}"
+	  Call DownloadPlugin
+	  RegDll "\$INSTDIR\\plugins\\${base}.dll"
+      SectionEnd
+    </echo>
+
+    <echo file="../plugin-desc-new.nsi" append="true">
+!insertmacro MUI_DESCRIPTION_TEXT $${SEC_${base}} $$(DESC_${base})
+    </echo>
+
+    <echo file="../plugin-i18n-new.nsh" append="true">
+!include "${basedir}\plugin-info.nsh"
+    </echo>
+  </target>
+
+  <target name="all" depends="dll, plugin"/>
+</project>

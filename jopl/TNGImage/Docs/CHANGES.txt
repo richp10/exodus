@@ -1,0 +1,75 @@
+Changelog:                            * reverse chronological order *
+
+* 1.2.0  *
+2002/10/07 - GJU - Added more libmng events
+           - GJU - Fixed assign method to copy all TNGImage properties
+           - GJU - Added function to copy bitmap contents
+2002/10/03 - GJU - Updated to libmng 1.0.5
+2002/09/19 - GJU - Added LoadFromResource function
+2002/08/04 - GJU - Added PNGneeded & JNGneeded functions
+           - GJU - Added property to access the TNGBitmap mng_handle
+
+* 1.0.1 *
+2001/10/23 - GJU - Adapted to work with Kylix                           
+           - GJU - Added OnRefresh event                                
+
+* 1.0.0 *
+2001/09/18 - GJU - First public release
+                                                                        
+* 0.9.8c *
+2001/08/25 - SPR - Fixed Late Binding ZLIB method reference issue       
+                                                                        
+* 0.9.8b *                                                              
+2001/08/25 - GJU - Added BGImage property for assigning background-image
+           - GJU - Added OnProcessHeader event                          
+                                                                        
+* 0.9.8 *                                                               
+2001/08/12 - ALT - Added Delphi6 package                                
+           - GJU - Changed the fix for TOpenPictureDialog as Borland    
+                   changed its design in D6                             
+2001/07/23 - GJU - Added gamma control functions                        
+2001/07/22 - GJU - Fixed some formatting                                
+2001/07/21 - GJU - Added code to prevent 256->16 palette reduction bug  
+                   (really wondering if it'll work this way?!?!?)        
+                   (search for 'Phil Scadden')                          
+2001/06/26 - GJU - Changed most CheckLIBMNGLoaded to assigned/exception 
+           - GJU - Fixed 'Invalid Window Handle' in OpenPictureDialog   
+           - GJU - Added limit checking for JPEG quality setting        
+           - GJU - added TMNGVideo component (see mngvideo.txt)         
+                   (optimized for video-stream playback)                
+2001/06/23 - SPR - Added stuff for late binding (see latebinding.txt)   
+2001/06/16 - GJU - Moved all string-constants to NGConst.pas            
+2001/06/12 - SPR - Tidied up CreatePNG                                  
+           - SPR - Bracketed some if statements for easier debugging    
+2001/06/10 - PJH - Added 1 bit alpha mask for alpha color               
+           - PJH - BugFix 8 bit alpha mask for alpha color              
+           - PJH - Fixed D5 compiler warnings (signed/unsigned compare) 
+2001/05/08 - SPR - Restructured for Maintainability                     
+           - SPR - Seperated original NGImage.pas into multiple units   
+                                                                        
+* 0.9.and-a-bit *                                                               
+Changes by Scott Price (a zillion thanks, mate!)
+- Added packaging for D3,D4,D5
+- Tidied up some code (specifically CreatePNG)
+- Bracketed some if-statements for easier debugging
+- Some other stuff...
+
+* 0.9.2 *
+Third beta (added JPEG/ZLIB, PNG save, JNG save)
+2001/05/04 - Added version constants
+           - Added OnStatusChange event property to TNGImage
+           - Added JNG save support to TNGImage
+2001/05/03 - Added PNG save support to TNGImage
+           - Added transparency variables to TNGImage
+           - Added support to assign a TBitmap to TNGImage
+           - Added TJPEGImage
+           - Added external defs for ZLIB/JPEG (included in libmng!)
+           - Added properties to access libmng variables to TNGImage
+           - Added conditionals to include/register specific components
+
+* 0.9.1 *
+Second beta (small fixes)
+
+* 0.9.0 *
+First beta (basic setup)
+

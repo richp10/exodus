@@ -1,0 +1,10 @@
+When you add a new plugin, export the IDL file from View TypeLib.
+
+When you change an interface in Exodus, update the GUID for that interface, as well as IExodusPlugin, then re-export the IDL file, then compile.
+
+Run vsvars.bat (from VStudio), and in that shell, go to the plugins
+dir and run regenidl.pl.  This will regenerate all of the .tlb's for
+all of the plugins, with the new GUID's.  Delphi will regen the .pas
+files from .tlb's.
+
+Run build.pl

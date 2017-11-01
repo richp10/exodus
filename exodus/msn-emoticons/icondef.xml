@@ -1,0 +1,245 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<icondef>
+  <meta>
+    <name>exodus-msn</name>
+    <version>1.0.0</version>
+    <description>Icons shipped with Exodus, in MSN style</description>
+    <author jid="hildjj@jabber.org">Joe Hildebrand</author>
+    <author jid="pgmillard@jabber.org">Peter Millard</author>
+    <creation>2004-04-10</creation>
+    <home>http://exodus.jabberstudio.org/</home>
+  </meta>
+  <icon>
+    <text>(A)</text>
+    <text>:saint</text>
+    <object mime="image/gif">msn_angel.gif</object>
+  </icon>
+  <icon>
+    <text>:-@</text>
+    <text>:@</text>
+    <text>:grrr</text>
+    <text>:mad</text>
+    <text>X(</text>
+    <text>X-(</text>
+    <text>x(</text>
+    <text>x-(</text>
+    <object mime="image/gif">msn_angry.gif</object>
+  </icon>
+  <icon>
+    <text>(?)</text>
+    <object mime="image/gif">msn_asl.gif</object>
+  </icon>
+  <icon>
+    <text>:=[</text>
+    <text>:[</text>
+    <object mime="image/gif">msn_bat.gif</object>
+  </icon>
+  <icon>
+    <text>(B)</text>
+    <object mime="image/gif">msn_beer.gif</object>
+  </icon>
+  <icon>
+    <text>:$</text>
+    <text>:blush</text>
+    <object mime="image/gif">msn_blush.gif</object>
+  </icon>
+  <icon>
+    <text>(Z)</text>
+    <text>:boy</text>
+    <object mime="image/gif">msn_boy.gif</object>
+  </icon>
+  <icon>
+    <text>:breath</text>
+    <object mime="image/gif">msn_breath.gif</object>
+  </icon>
+  <icon>
+    <text>(U)</text>
+    <object mime="image/gif">msn_broken.gif</object>
+  </icon>
+  <icon>
+    <text>(^)</text>
+    <object mime="image/gif">msn_cake.gif</object>
+  </icon>
+  <icon>
+    <text>(P)</text>
+    <object mime="image/gif">msn_camera.gif</object>
+  </icon>
+  <icon>
+    <text>(@)</text>
+    <object mime="image/gif">msn_cat.gif</object>
+  </icon>
+  <icon>
+    <text>(O)</text>
+    <object mime="image/gif">msn_clock.gif</object>
+  </icon>
+  <icon>
+    <text>(C)</text>
+    <text>(c)</text>
+    <object mime="image/gif">msn_coffee.gif</object>
+  </icon>
+  <icon>
+    <text>(%)</text>
+    <object mime="image/gif">msn_cuffs.gif</object>
+  </icon>
+  <icon>
+    <text>(6)</text>
+    <text>:eek2</text>
+    <object mime="image/gif">msn_devil.gif</object>
+  </icon>
+  <icon>
+    <text>(&amp;)</text>
+    <object mime="image/gif">msn_dog.gif</object>
+  </icon>
+  <icon>
+    <text>(~)</text>
+    <object mime="image/gif">msn_film.gif</object>
+  </icon>
+  <icon>
+    <text>:(</text>
+    <text>:-(</text>
+    <object mime="image/gif">msn_frown.gif</object>
+  </icon>
+  <icon>
+    <text>(X)</text>
+    <text>:girl</text>
+    <text>:grrl</text>
+    <object mime="image/gif">msn_girl.gif</object>
+  </icon>
+  <icon>
+    <text>(H)</text>
+    <text>:cool</text>
+    <text>B)</text>
+    <text>B-)</text>
+    <object mime="image/gif">msn_glasses.gif</object>
+  </icon>
+  <icon>
+    <text>(/)</text>
+    <object mime="image/gif">msn_graph.gif</object>
+  </icon>
+  <icon>
+    <text>:-&gt;</text>
+    <text>:-D</text>
+    <text>:&gt;</text>
+    <text>:D</text>
+    <object mime="image/gif">msn_grin.gif</object>
+  </icon>
+  <icon>
+    <text>(L)</text>
+    <object mime="image/gif">msn_heart.gif</object>
+  </icon>
+  <icon>
+    <text>(})</text>
+    <object mime="image/gif">msn_hug_left.gif</object>
+  </icon>
+  <icon>
+    <text>({)</text>
+    <object mime="image/gif">msn_hug_right.gif</object>
+  </icon>
+  <icon>
+    <text>(K)</text>
+    <text>:lips</text>
+    <object mime="image/gif">msn_kiss.gif</object>
+  </icon>
+  <icon>
+    <text>:kissme</text>
+    <text>:kissmyass</text>
+    <object mime="image/gif">msn_kissme.gif</object>
+  </icon>
+  <icon>
+    <text>(I)</text>
+    <object mime="image/gif">msn_lightbulb.gif</object>
+  </icon>
+  <icon>
+    <text>(E)</text>
+    <object mime="image/gif">msn_mail.gif</object>
+  </icon>
+  <icon>
+    <text>(D)</text>
+    <object mime="image/gif">msn_martini.gif</object>
+  </icon>
+  <icon>
+    <text>(S)</text>
+    <object mime="image/gif">msn_moon.gif</object>
+  </icon>
+  <icon>
+    <text>(8)</text>
+    <text>o/`</text>
+    <text>o/~</text>
+    <object mime="image/gif">msn_note.gif</object>
+  </icon>
+  <icon>
+    <text>(G)</text>
+    <object mime="image/gif">msn_package.gif</object>
+  </icon>
+  <icon>
+    <text>(T)</text>
+    <object mime="image/gif">msn_phone.gif</object>
+  </icon>
+  <icon>
+    <text>(R)</text>
+    <object mime="image/gif">msn_rainbow.gif</object>
+  </icon>
+  <icon>
+    <text>(F)</text>
+    <text>:rose</text>
+    <object mime="image/gif">msn_rose.gif</object>
+  </icon>
+  <icon>
+    <text>:-O</text>
+    <text>:-o</text>
+    <text>:O</text>
+    <text>:o</text>
+    <object mime="image/gif">msn_shocked.gif</object>
+  </icon>
+  <icon>
+    <text>:)</text>
+    <text>:-)</text>
+    <text>=)</text>
+    <object mime="image/gif">msn_smile.gif</object>
+  </icon>
+  <icon>
+    <text>:-|</text>
+    <text>:|</text>
+    <object mime="image/gif">msn_straight.gif</object>
+  </icon>
+  <icon>
+    <text>;''(</text>
+    <object mime="image/gif">msn_tantrum.gif</object>
+  </icon>
+  <icon>
+    <text>(N)</text>
+    <object mime="image/gif">msn_thumb_down.gif</object>
+  </icon>
+  <icon>
+    <text>(Y)</text>
+    <object mime="image/gif">msn_thumb_up.gif</object>
+  </icon>
+  <icon>
+    <text>:-S</text>
+    <text>:-s</text>
+    <text>:S</text>
+    <text>:conf</text>
+    <text>:s</text>
+    <object mime="image/gif">msn_tilde.gif</object>
+  </icon>
+  <icon>
+    <text>:-P</text>
+    <text>:-p</text>
+    <text>:P</text>
+    <text>:p</text>
+    <object mime="image/gif">msn_tongue.gif</object>
+  </icon>
+  <icon>
+    <text>(W)</text>
+    <object mime="image/gif">msn_wilted.gif</object>
+  </icon>
+  <icon>
+    <text>;)</text>
+    <text>;-)</text>
+    <object mime="image/gif">msn_wink.gif</object>
+  </icon>
+  <icon>
+    <text>:moo</text>
+    <object mime="image/gif">moo.gif</object>
+  </icon>
+</icondef>

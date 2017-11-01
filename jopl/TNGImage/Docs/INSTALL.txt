@@ -1,0 +1,26 @@
+1) Copy libmng.dll to your Windows system directory
+
+2) Open one of the Packages from the available distribution (Delphi 3 - 6), and 
+   press the Install button to Compile and Install the package.
+
+2a) If needing to create a package from scratch, use the Browse button to select 
+    the "RegNG.pas" as the Unit file name to include in the package.  This will
+    implicitly import the other required units.
+
+
+Note:  The component will not be visible on your palette as it is non-visual!
+       It provides additional functionality to any TImage in the unit when the 
+       "NGImages" unit is added to the USES clause of any other unit that wants 
+       to use the file formats supported by TNGImage.
+
+
+3) Now when you add a TImage to a form and open the Picture property dialog from
+   the Object Inspector, the "Load Picture" dialog should show entries for MNG,
+   JNG, PNG and JPEG files.
+   (depending on the included components during compile!)
+
+
+Enjoy!
+
+
+Gerard Juyn

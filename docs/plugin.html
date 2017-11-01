@@ -1,0 +1,98 @@
+<html>
+<title>Exodus Plugin Interfaces - IExodusPlugin</title>
+<link rel="stylesheet" type="text/css" href="style.css"></link>
+<body>
+
+<center>
+<a href="http://exodus.jabberstudio.org">
+<img src="..\exodus\web\exodus-logo.png" border="0"/>
+</a>
+<hr>
+<div style="font-size:20pt; font-weight: bold;">Exodus Plugin Interfaces - IExodusPlugin</div>
+</center>
+<hr>
+
+<!--
+// *********************************************************************//
+// Interface: IExodusPlugin
+// Flags:     (4416) Dual OleAutomation Dispatchable
+// GUID:      {72470D1C-9A66-4735-A7CF-446F43561C92}
+// *********************************************************************//
+  IExodusPlugin = interface(IDispatch)
+    ['{72470D1C-9A66-4735-A7CF-446F43561C92}']
+    procedure Startup(const ExodusController: IExodusController); safecall;
+    procedure Shutdown; safecall;
+    procedure Process(const xpath: WideString; const event: WideString; const xml: WideString); safecall;
+    procedure NewChat(const jid: WideString; const Chat: IExodusChat); safecall;
+    procedure NewRoom(const jid: WideString; const Room: IExodusChat); safecall;
+    function NewIM(const jid: WideString; var Body: WideString; var Subject: WideString;
+                   const XTags: WideString): WideString; safecall;
+    procedure Configure; safecall;
+    procedure MenuClick(const ID: WideString); safecall;
+    procedure MsgMenuClick(const ID: WideString; const jid: WideString; var Body: WideString;
+                           var Subject: WideString); safecall;
+    procedure NewOutgoingIM(const jid: WideString; const InstantMsg: IExodusChat); safecall;
+  end;
+-->
+
+<p>
+IExodusPlugin is the core interface that is used by exodus, and MUST be implemented by all plugins.
+
+<dl>
+<a name="startup">
+<dt>Startup(IExodusController)</dt>
+</a>
+<dd>
+This method is called by exodus after it has instantiated an instance of the plugin. The exodus instance is passed as the only parameter. Plugins will most likely want to cache this object in order to make other calls back to the exodus application itself.
+</dd>
+
+<a name="shutdown">
+<dt>Shutdown()</dt></a>
+<dd>
+This method is called whenever the plugin is being shutdown. Possible reasons for this may be that the application is shutting down (very common) or the user has selected to disable this particular plugin. You should make sure that all refcounts are decremented such that the exodus process can be completely freed if the application is exiting.
+</dd>
+
+<a name="configure">
+<dt>Configure()</dt></a>
+<dd>
+Exodus calls this method from the plugin options window where the user can configure a specific plugin. Plugins should display some kind of configuration dialog and allow the user to specific options. In order to persist options (preferences), plugins can use the appropriate <a href="controller.html">IExodusController</a> methods (such as getPrefAsString and setPrefAsString) to persist options directly to the exodus.xml file in the user's profile.
+</dd>
+
+<a name="process">
+<dt>Process(BSTR xpath, BSTR event, BSTR xml)</dt></a>
+<dd>
+When a plugin registers to receive packets (by calling <a href="controller.html#registercallback">RegisterCallback</a>), exodus will call this method for every packet which matches the provided xpath statement. The xpath parameter allows a plugin to register for multiple callbacks, and be notified which one has matched. The event will almost always be the string "xml", and the xml is a BSTR containing the raw serialized XML. Plugins are responsible for re-parsing the serialized XML if a DOM object is required.
+</dd>
+
+<a name="newchat"><dt>NewChat(BSTR jid, IExodusChat chat)</dt></a>
+<dd>
+When a new chat window is started by either the user, or an incoming message element, this method is called. If a plugin wishes to add functionality to this chat window, it should register with the <a href="chat.html">IExodusChat</a> object passed as the second parameter. Typically, plugins which are interested in chat windows will wish to instantiate some other COM object for each window. The main plugin should use this event to do this, and register the new object instance with the chat object passed in.
+</dd>
+
+<a name="newroom"><dt>NewRoom(BSTR jid, IExodusChat room)</dt></a>
+<dd>
+Almost identical to the NewChat event, but fired when new conference rooms are started. The same IExodusChat controller is used to manipulate the room object.
+</dd>
+
+<a name="newoutgoingim"><dt>NewOutgoingIM(BSTR jid, IExodusChat InstantMsg)</dt></a>
+<dd>
+Almost identical to the NewChat event, but fired when a new instant message window is opened. The same IExodusChat controller is used to get events and manipulate the IM window.
+</dd>
+
+<a name="menuclick"><dt>MenuClick(BSTR ID)</dt></a>
+<dd>
+Plugins are allowed to add menu items into the main menu under the Tools | Plugins selection. When a menu item is clicked which belongs to <em>any</em> plugin, this method is fired for all plugins. Plugins MUST cache the ID's which are returned from the <a href="controller.html#addpluginmenu">AddPluginMenu</a> method or from the <a href="controller.html#addcontactmenu">AddContactMenu</a> method. When this method is called, compare the ID passed to the cached id's of the menu items that your plugin added, and act accordingly.
+</dd>
+
+<a name="msgmenuclick"><dt>MsgMenuClick(BSTR ID)</dt></a>
+<dd>
+Plugins are also allowed to add menu items to the context menu for Instant Message (IM) windows. This event is fired whenever one of these menu items is clicked which belongs to <em>any</em> plugin. Similar to the MenuClick event, plugins should cache the ID which they receive from <a href="controller.html#addmsgmenu">addMessageMenu</a> method.
+</dd>
+
+<a name="newim"><dt>NewIM(BSTR jid, BSTR Body, BSTR Subject, BSTR xtags): BSTR</dt></a>
+<dd>
+This event is fired whenever an IM message (not a chat or groupchat) is being sent from the system. This includes messages like room invites, and roster items being sent. Plugins are allowed to change the value of the Body and Subject paramaters if necessary. Plugins should return WELL-FORMED XML as a return value if that plugin needs to append additional elements into the message stanza. For example, a plugin could return: &lt;x xmlns="foo"&gt;Some CDATA&lt;/x&gt; and have that x tag be inserted into the outgoing message.
+</dd>
+
+</body>
+</html>

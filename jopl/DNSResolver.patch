@@ -1,0 +1,126 @@
+--- d:\dev\Delphi7\Source\Indy\IdDNSResolver.pas	Tue Aug 20 17:40:12 2002
++++ IdDNSResolver.pas	Thu Oct 30 06:53:30 2003
+@@ -32,12 +32,12 @@
+ type
+   { TODO : Solve problem with obsolete records }
+   TQueryRecordTypes = (qtA, qtNS, qtMD, qtMF, qtName, qtSOA, qtMB,
+-    qtMG, qtMR, qtNull, qtWKS, qtPTR, qtHINFO, qtMINFO, qtMX, qtTXT, qtSTAR);
++    qtMG, qtMR, qtNull, qtWKS, qtPTR, qtHINFO, qtMINFO, qtMX, qtTXT, qtSRV, qtSTAR);
+ const
+   // Lookup table for query record values.
+-  QueryRecordValues: array [0..16] of word= (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,255);
+-  QueryRecordTypes: Array [0..16] of TQueryRecordTypes = (qtA, qtNS, qtMD, qtMF, qtName, qtSOA, qtMB,
+-    qtMG, qtMR, qtNull, qtWKS, qtPTR, qtHINFO, qtMINFO, qtMX, qtTXT, qtSTAR);
++  QueryRecordValues: array [0..17] of word= (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,33,255);
++  QueryRecordTypes: Array [0..17] of TQueryRecordTypes = (qtA, qtNS, qtMD, qtMF, qtName, qtSOA, qtMB,
++    qtMG, qtMR, qtNull, qtWKS, qtPTR, qtHINFO, qtMINFO, qtMX, qtTXT, qtSRV, qtSTAR);
+ type
+   TQueryType = set of TQueryRecordTypes;
+ 
+@@ -167,6 +167,25 @@
+     property HostName: string read FHostName;
+   end;
+ 
++  // PGM!
++  TSRVRecord = class(TResultRecord)
++  private
++    FIP: string;
++    FPort: Word;
++    FPriority: Word;
++    FWeight: Word;
++  public
++    procedure Parse(CompleteMessage: string; APos: Integer); override;
++    constructor Create(Collection: TCollection); override;
++    procedure Assign(Source: TPersistent); override;
++    
++    property IP: string read FIP;
++    property Port: Word read FPort;
++    property Weight: Word read FWeight;
++    property Priority: Word read FPriority;
++  end;
++  // END PGM
++
+   TNSRecord = class(TNAMERecord)
+   end;
+ 
+@@ -200,8 +219,6 @@
+     property Items[Index: Integer]: TResultRecord read GetItem write SetItem; default;
+   end;
+ 
+-
+-
+   TPTRRecord = Class(TNAMERecord)
+   end;
+ 
+@@ -491,6 +508,7 @@
+   // Iterate thru questions
+   FInternalQuery := WordToTwoCharStr(FDNSHeader.ID);
+   FInternalQuery := FInternalQuery + WordToTwoCharStr(FDNSHeader.BitCode);
++
+   { TODO : Optimize for non-double loop }
+   for ARecType := Low(TQueryRecordTypes) to High(TQueryRecordTypes) do begin
+     if ARecType in QueryRecords then begin
+@@ -651,6 +669,28 @@
+   inherited Create(Collection);
+ end;
+ 
++// PGM!
++procedure TSRVRecord.Assign(Source: TPersistent);
++begin
++  if Source is TSRVRecord then begin
++    FIP := TSRVRecord(Source).IP;
++    FPort := TSRVRecord(Source).Port;
++  end
++  else
++    inherited Assign(Source);
++end;
++
++constructor TSRVRecord.Create(Collection: TCollection);
++begin
++    FIP := '';
++    FPort := 0;
++    FWeight := 0;
++    FPriority := 0;
++    inherited Create(Collection);
++end;
++// END PGM!
++
++
+ { TQueryResult }
+ 
+ function TQueryResult.Add(Answer: string; var APos: Integer): TResultRecord;
+@@ -713,7 +753,13 @@
+     end;
+     else
+       // Unsoppurted query type, return generic record
+-      result := TResultRecord.Create(self);
++      // PGM!
++      if (RR_Type = 33) then begin
++        result := TSRVRecord.Create(Self);
++      end
++      else
++      // END PGM!
++        result := TResultRecord.Create(self);
+   end; // case
+   // Set the "general purprose" options
+   if assigned(result) then
+@@ -899,6 +945,19 @@
+   FHostName := (Collection as TQueryResult).DNSStrToDomain(CompleteMessage, APos);
+ end;
+ 
++// PGM!
++procedure TSRVRecord.Parse(CompleteMessage: String; APos: Integer);
++begin
++    inherited;
++    FPriority := TwoCharToWord(CompleteMessage[APos], CompleteMessage[APos+1]);
++    inc(Apos, 2);
++    FWeight := TwoCharToWord(CompleteMessage[APos], CompleteMessage[APos+1]);
++    inc(Apos, 2);
++    FPort := TwoCharToWord(CompleteMessage[APos], CompleteMessage[APos+1]);
++    inc(Apos, 2);
++    FIP := (Collection as TQueryResult).DNSStrToDomain(CompleteMessage, APos);
++end;
++// END PGM!
+ 
+ procedure TQueryResult.Clear;
+ begin

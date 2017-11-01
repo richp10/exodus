@@ -1,0 +1,36 @@
+#------------------------------------------------------------------------------
+VERSION = BWS.01
+#------------------------------------------------------------------------------
+!ifndef ROOT
+ROOT = $(MAKEDIR)\..
+!endif
+#------------------------------------------------------------------------------
+MAKE = $(ROOT)\bin\make.exe -$(MAKEFLAGS) -f$**
+DCC = $(ROOT)\bin\dcc32.exe $**
+BRCC = $(ROOT)\bin\brcc32.exe $**
+#------------------------------------------------------------------------------
+PROJECTS = AIMImport.dll ICQImport.dll JabberStats.dll \
+  ExNetMeeting.dll RosterTools.dll ExAspell.dll
+#------------------------------------------------------------------------------
+default: $(PROJECTS)
+#------------------------------------------------------------------------------
+
+AIMImport.dll: AIM-Import\ExImportAIM.dpr
+  $(DCC)
+
+ICQImport.dll: ICQ-Import\ExImportICQ.dpr
+  $(DCC)
+
+JabberStats.dll: JabberStats\ExJabberStats.dpr
+  $(DCC)
+
+ExNetMeeting.dll: NetMeeting\ExNetMeeting.dpr
+  $(DCC)
+
+RosterTools.dll: RosterTools\ExRosterTools.dpr
+  $(DCC)
+
+ExAspell.dll: ASpeller\ExAspell.dpr
+  $(DCC)
+
+

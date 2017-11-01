@@ -1,0 +1,36 @@
+[
+  uuid(467946CF-A73A-4084-B226-57C0FA897CBF), 
+  version(1.0), 
+  helpstring("ExIRCPlugin Library"), 
+  custom(DE77BA64-517C-11D1-A2DA-0000F8773CE9, 100663657), 
+  custom(DE77BA63-517C-11D1-A2DA-0000F8773CE9, 1064853424), 
+  custom(DE77BA65-517C-11D1-A2DA-0000F8773CE9, "Created by MIDL version 6.00.0361 at Mon Sep 29 10:37:03 2003\n")
+    
+]
+library ExIRCPlugin
+{
+
+  importlib("Exodus.exe");
+  importlib("stdole2.tlb");
+
+  [
+    uuid(5B2D612D-7F76-4496-A6C6-6E7187D1F57F), 
+    version(1.0), 
+    helpstring("IRCPlugin Object")
+  ]
+  coclass IRCPlugin
+  {
+    [default] interface IExodusPlugin;
+  };
+
+  [
+    uuid(1D9F8982-BCDC-49FF-95C9-B87BAE450977), 
+    version(1.0), 
+    helpstring("IRCRoomPlugin Object")
+  ]
+  coclass IRCRoomPlugin
+  {
+    [default] interface IExodusChatPlugin;
+  };
+
+}; 

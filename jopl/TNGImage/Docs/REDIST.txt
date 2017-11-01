@@ -1,0 +1,41 @@
+Windows
+=======
+
+All files can be redistributed freely as long as their individual license notes
+are met. eg:
+
+- for NGImage.pas you need not worry about a thing. I'd appreciate an
+  acknowledgement but it's not a requirement.
+
+- For libmng.dll you should meet the requirements for LIBMNG, ZLIB, IJG Source
+  code and Little CMS. Visit respective sites for more info:
+  http://www.libmng.com/
+  http://www.zlib.org/
+  http://www.ijg.org/
+  http://www.littlecms.com/
+
+If you distribute libmng.dll with you Application, and you wish to install it
+into the user's Windows System folder (which is recommended), you *must* follow
+the guidelines as defined in the file LIBMNG_DLL.txt. This file is copied from
+the original libmng distribution and is provided here for convenience only.
+In case of discrepencies between this version and that in the original libmng
+distribution, the file in the original distribution will prevail.
+
+You may distribute the included binary libmng installation file. It has the
+same requirements as including libmng.dll by itself. If you want to point your
+users to the latest binary installation, please use the following URL:
+
+http://www.libmng.com/windows32.html
+
+
+Linux
+=====
+
+NGImage is freely distributable.
+
+Apart from usual Kylix requirements you will also need to distribute
+libz.so (1.1.3), libjpeg.so (6.2) & libmng.so (1.0.0+)
+There's a libmng.rpm included with at least RedHat7.1; check the RedHat site
+for details.
+
+The latest libmng source is freely available from http://www.libmng.com/

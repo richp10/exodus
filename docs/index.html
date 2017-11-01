@@ -1,0 +1,69 @@
+<html>
+<title>Exodus Plugin Documentation</title>
+<style>
+body { font-family: Tahoma, Arial, Helvetica; }
+</style>
+
+<body>
+
+<center>
+<a href="http://exodus.jabberstudio.org">
+<img src="..\exodus\web\exodus-logo.png" border="0"/>
+</a>
+<hr>
+<div style="font-size:20pt; font-weight: bold;">Exodus Plugin Documentation</div>
+</center>
+<hr>
+
+<div style="font-size:16pt; font-weight: bold;">Basic plugin architecture</div>
+<p>
+The plugin system for exodus is based around using Microsoft's COM interfaces
+to allow third-party components access to the GUI based events and
+packets coming into the application from the jabber server.
+</p>
+
+<p>
+To function "as a plugin" in exodus, a developer must create an ActiveX library
+which implements at least the IExodusPlugin interface. This interfaces provides
+basic functionality which allows Exodus to control the plugin. Upon startup, the
+plugin is passed a reference to the main Exodus controller which allows the
+plugin itself to manipulate data, fire events, and send packets.
+</p>
+
+<div style="font-size:16pt; font-weight: bold;">
+Interfaces which should be implemented by Plugins</div>
+<ul>
+<li><span style="font-weight: bold"><a href="plugin.html">IExodusPlugin</a></span>
+</li>
+
+<li><span style="font-weight: bold"><a href="chatplugin.html">IExodusChatPlugin</a></span>
+</li>
+
+</ul>
+
+<div style="font-size:16pt; font-weight: bold;">
+Interfaces implemented by Exodus</div>
+<ul>
+<li><span style="font-weight: bold"><a href="controller.html">IExodusController</a></span>
+</li>
+
+<li><span style="font-weight: bold"><a href="chat.html">IExodusChat</a></span>
+</li>
+
+<li><span style="font-weight: bold"><a href="roster.html">IExodusRoster</a></span>
+</li>
+
+<li><span style="font-weight: bold"><a href="rosteritem.html">IExodusRosterItem</a></span>
+</li>
+
+<li><span style="font-weight: bold"><a href="ppdb.html">IExodusPPDB</a></span>
+</li>
+
+<li><span style="font-weight: bold"><a href="presence.html">IExodusPresence</a></span>
+</li>
+</ul>
+
+<hr>
+<div style="font-size:9pt;">Copyright (c) 2003, Peter Millard</div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+The late binding option
+=======================
+
+Note that this is enabled by default!
+
+This option can be used to minimize the load-time of the application. The way
+it functions is that libmng.dll will only be loaded once it is needed. Eg. as
+soon as the first TNGImage (or descendant), TJPEGImage or one of the zlib
+functions gets created/called.
+
+The way this works is through a reference-counter. TNGImage and TJPEGImage
+will do this automatically. To use the zlib functions you'll need to put your
+code within the following construct:
+
+  uses NGTypes;
+
+  BeginUseZLib;
+  try
+    ... your zlib accessing code ...
+  finally
+    EndUseZLib;
+  end;
+
+(BTW. if you have a TImage with a PNG/JNG/MNG or JPEG loaded at designtime on
+the main form (or any auto-loaded forms), this feature is not for you!)
+
+The option adds a little overhead as the first call to a libmng function needs
+to load libmng.dll and query all the function entrypoints. But if you really
+want your app to open as fast as possible, this is the way to go.
+
+
+KYLIX!!
+=======
+
+Under Linux, zlib is a separate shared object. The same is true for lcms (if
+present) and the IJG JPEG code. Also, as Kylix offers automatic support for
+JPEG images natively, the TJPEGImage in this package is not made available.
+
+I have also noticed that with shared libraries a non-existant entry-point will
+cause the application to simply halt, without further messages or anything.
+This is important if you plan to use this component with any libmng.so supplied
+by default on many Linux distributions. Although this is perfectly valid, most
+of these distro's will have an older version of the lib, and dynamic linking
+may fail without any reasonable explanation.

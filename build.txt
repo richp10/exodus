@@ -1,0 +1,13 @@
+Install Borland Developer Studio 2006.
+Install the Jedi Code Library from here. Use at least release 1.97 for BDS2006.
+Install and setup Subversion.
+Checkout the Exodus source code
+svn checkout http://exodus.googlecode.com/svn/trunk/ exodus
+
+Unzip tntUnicode.zip from the Exodus\Exodus\Components directory.
+Open Exodus\Exodus\Components\tntUnicode\Packages\BDS4\TntUnicodeVCL_Design.bdsproj
+From the Project Manager, Right click, and select Install.
+Open Exodus\Exodus\Components\ExComponents.dpk
+From the Project Manager, Right click, and select Install.
+Open Exodus\Exodus.dpr
+Click "Build Exodus"

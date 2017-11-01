@@ -1,0 +1,54 @@
+TMNGVIDEO
+=========
+
+This component is based on the memory-optimized feature of libmng specific for
+playback of long MNG videos. The saving is quite dramatic as no playback info
+is cached. However this does impose several restrictions.
+
+- TMNGVideo cannot do save operations
+  Nothing is stored so there's nothing to save!
+
+- TMNGVideo cannot be assigned to/from other types
+
+- TMNGVideo cannot rewind
+  Again, no playback info is stored so there's nothing to rewind to
+
+- The MNG cannot contain LOOP chunks
+  Again this is imposed by libmng as it doesn't cache anything which would be
+  required for loops to function in the first place!
+
+- The MNG may contain a TERM chunk, but this will not be processed
+  ...same reasons as above...
+
+- TMNGVideo can only be used at runtime
+  It has the same extension as a regular MNG, which is already registered for
+  the TMNGImage component
+
+  
+IOW if you're going to work with this thing you are limited in your options.
+
+Note also that using TOpenPictureDialog uses TMNGImage for MNG files, so if you
+point it to a long MNG video-stream it'll be loading the whole thing into memory
+which is exactly what you want to prevent with TMNGVideo. So in this case,
+please use the TOpenDialog.
+
+
+If you're still convinced this is what you want to be playing with then here's
+some code:
+
+
+procedure TMyForm.Button1Execute(Sender: TObject);
+var MyMNG: TMNGVideo;
+begin
+  if OpenDialog1.Execute then
+  begin
+    MyMNG := TMNGVideo.Create;
+    try
+      Image1.Picture.Assign(MyMNG);
+    finally
+      MyMNG.Free;
+    end;
+    Image1.Picture.Graphic.LoadFromFile(OpenDialog1.FileName);
+  end;
+end;
+

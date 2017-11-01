@@ -1,0 +1,73 @@
+package ExComponents;
+
+{$R *.res}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'Exodus custom controls'}
+{$IMPLICITBUILD ON}
+{$DEFINE INDY9}
+
+requires
+  rtl,
+  vcl,
+  designide,
+  vclx,
+  TntUnicodeVcl,
+  vclactnband,
+  vcldb,
+  dbrtl,
+  indy,
+  vcljpg,
+  Jcl,
+  JclVcl;
+
+contains
+  ExRichEdit in 'ExRichEdit.pas',
+  richole in 'richole.pas',
+  RichEdit2 in 'RichEdit2.pas',
+  RTFProperty in 'RTFProperty.pas',
+  RTFEditor in 'RTFEditor.pas' {RichEdit98Editor},
+  WStrList in 'WStrList.pas',
+  Langs in 'Langs.pas',
+  ExodusLabel in 'ExodusLabel.pas',
+  Unicode in '..\..\jopl\Unicode.pas',
+  RegExpr in '..\..\jopl\RegExpr.pas',
+  TopStatusFrame in 'TopStatusFrame.pas',
+  gnugettext in '..\gnugettext.pas',
+  ExNumericEdit in 'ExNumericEdit.pas',
+  ExGroupBox in 'ExGroupBox.pas' {Frame1: TFrame},
+  ExFrame in 'base\ExFrame.pas',
+  ExForm in 'base\ExForm.pas',
+  ExBrandPanel in 'ExBrandPanel.pas',
+  ExGradientPanel in 'ExGradientPanel.pas',
+  ExCheckGroupBox in 'ExCheckGroupBox.pas',
+  ExGraphicButton in 'ExGraphicButton.pas',
+  Exodus_TLB in '..\Exodus_TLB.pas',
+  ActionMenus in 'ActionMenus.pas',
+  MSXML_TLB in '..\MSXML_TLB.pas',
+  ExCustomSeparatorBar in 'ExCustomSeparatorBar.pas',
+  NGConst in '..\..\jopl\TNGImage\Package\NGConst.pas',
+  NGImages in '..\..\jopl\TNGImage\Package\NGImages.pas',
+  NGTypes in '..\..\jopl\TNGImage\Package\NGTypes.pas',
+  PNGWrapper in '..\..\jopl\PNGWrapper.pas';
+
+end.

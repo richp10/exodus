@@ -1,0 +1,35 @@
+#include "version.h"
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION EXVERSION
+ PRODUCTVERSION 1,0,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "Comments", "This is free! Promote jabber and give it to a friend.\0"
+            VALUE "CompanyName", "Jabber.org\0"
+            VALUE "FileDescription", "Exodus Jabber Client\0"
+            VALUE "FileVersion", EXVERSIONSTR
+            VALUE "InternalName", "\0"
+            VALUE "LegalCopyright", "Copyright (C) Peter Millard, 2002\0"
+            VALUE "OriginalFilename", "Exodus.EXE\0"
+            VALUE "ProductName", "Exodus\0"
+            VALUE "ProductVersion", "1.0.0.0\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+

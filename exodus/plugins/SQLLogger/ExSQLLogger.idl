@@ -1,0 +1,28 @@
+[
+  uuid(8E0171A0-18AB-4B04-B55F-8BBAB8271357), 
+  version(1.0), 
+  helpstring("ExSQLLogger Library"), 
+  control, 
+  custom(DE77BA64-517C-11D1-A2DA-0000F8773CE9, 100663657), 
+  custom(DE77BA63-517C-11D1-A2DA-0000F8773CE9, 1149185421), 
+  custom(DE77BA65-517C-11D1-A2DA-0000F8773CE9, "Created by MIDL version 6.00.0361 at Thu Jun 01 14:10:21 2006\n")
+    
+]
+library ExSQLLogger
+{
+
+  importlib("Exodus.exe");
+  importlib("stdole2.tlb");
+
+  [
+    uuid(B1D1A5F9-A60D-4257-AD11-E0F1C2F4759B), 
+    version(1.0), 
+    helpstring("SQLLogger Object")
+  ]
+  coclass SQLLogger
+  {
+    [default] interface IExodusPlugin;
+    interface IExodusLogger;
+  };
+
+};

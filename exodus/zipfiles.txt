@@ -1,0 +1,8 @@
+Exodus.exe
+IdleHooks.dll
+libeay32.dll
+ssleay32.dll
+locale.zip
+GPL-LICENSE.TXT
+msn_emoticons.dll
+yahoo_emoticons.dll

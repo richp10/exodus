@@ -1,0 +1,1554 @@
+/** @mainpage Exodus Plugin Interfaces
+
+Creating a new plugin for Exodus is a simple process using COM libraries.
+
+<ol>
+<li> Create a new .DLL which implements at least the IExodusPlugin interface.
+<li> Copy the file into the ./plugins directory where-ever Exodus has been installed.
+<li> Start Exodus.
+<li> Goto Tools | Options | Plugins, and enable your plugin.
+</ol>
+
+<p>
+The basic idea is that when your plugin is initialized, you will get called back via the IExodusPlugin interface with a reference to an IExodusController object. Your plugin MUST cache this object and use it to make calls to the client itself.
+</p>
+
+<p>
+If your plugin needs to receive packets, it should use IExodusPlugin::RegisterCallback with the appropriate xpath-link filter for packets which you are interested in receiving.
+</p>
+
+<p>Good starting places are the <a href="./interfaceExodusCOM_1_1IExodusController.html">IExodusController</a> reference and the <a href="./interfaceExodusCOM_1_1IExodusPlugin.html">IExodusPlugin</a> reference. If you have questions about using the plugin interface, please post them to the <a href="http://jabberstudio.org/cgi-bin/mailman/listinfo/exodus-dev">Exodus-Dev mailing list</a>.
+**/
+
+[
+  uuid(219E0029-5710-4C9B-BE33-4C7F046D7792),
+  version(1.0),
+  helpstring("Exodus COM Plugin interfaces")
+
+]
+library ExodusCOM
+{
+
+  importlib("stdole2.tlb");
+
+  [
+    uuid(35B80906-4D4D-4A1D-8BB2-1F0029916422),
+    version(1.0),
+    helpstring("ExodusController Object")
+  ]
+  coclass ExodusController
+  {
+    [default] interface IExodusController;
+  };
+
+  [
+    uuid(DB3F5C90-0575-47E4-8F00-EED79757A97B),
+    version(1.0),
+    helpstring("ExodusChat Object")
+  ]
+  coclass ExodusChat
+  {
+    [default] interface IExodusChat;
+  };
+
+  [
+    uuid(9AE59046-2197-429A-A62D-8EE61122B04E),
+    version(1.0)
+  ]
+  /**
+    Enumeration
+  */
+  typedef enum tagChatParts
+  {
+    HWND_MsgInput = 0,
+    Ptr_MsgInput = 1,
+    HWND_MsgOutput = 2,
+    Ptr_MsgOutput = 3
+  } ChatParts;
+
+  [
+    uuid(2C576B16-DD6A-4E8C-8DEB-38E255B48A88),
+    version(1.0),
+    helpstring("Dispatch interface for ExodusChatPlugin Object"),
+    dual,
+    oleautomation
+  ]
+  /**
+  IExodusChatPlugin
+  Plugins MUST implement this interface if you need to catch events generated from message windows, chat windows, or groupchat windows. The same interface is used to catch all events.
+  
+  When a new window is created in Exodus, the IExodusPlugin::NewChat, IExodusPlugin::NewRoom, or IExodusPlugin::NewOutgoingIM will be fired. Your plugin then has the oppurtunity to create a new "handler" object for that window. The IExodusChat interface is passed to those events which allow the plugin to call IExodusChat::RegisterPlugin on that new "window". Once your new chat handler has been registered, you will start receiving events on this interface. 
+  
+  Your handler (which implements this interface) should also cache the IExodusChat interface so that it can call back to the specific window whenever necessary.
+  */
+   interface IExodusChatPlugin: IDispatch
+  {
+    [
+    id(0x00000001)
+    ]
+    /** 
+    This event will be fired before an outgoing message is sent from the window. Plugins can modify the value of Body before returning.
+    @param Body The string representing the plaintext body about to be sent. If a plugin wants to prevent the message from being sent, it can change the Body param to an empty string. 
+    **/
+    HRESULT _stdcall onBeforeMessage([in] BSTR * Body );
+    [
+    id(0x00000002)
+    ]
+    /** 
+    After all plugins have had a chance to change the Body in the onBeforeMessage event, this event will be fired.
+    @param Body The plaintext body of the message about to be sent. Plugins can not change this value.
+    @return Plugins which wish to add additional XML to the outgoing packet MUST return that XML as a string of well-formed XML. That XML will be added as child elements under the main message element.
+    **/
+    HRESULT _stdcall onAfterMessage([in] BSTR * Body, [out, retval] BSTR * Additional_XML );
+    [
+    id(0x00000003)
+    ]
+    /** 
+    Every time a key is pressed in the outgoing text window, this event will fire with the key. Use this event to perform as-you-type spell checkers and similar functions.
+    @param Key The key which was pressed.
+    **/
+    HRESULT _stdcall onKeyPress([in] BSTR Key );
+    [
+    id(0x00000004)
+    ]
+    /** 
+    Context menus exist for both chat windows and multi-user chat windows. Plugins can add menu items to this menu using the IExodusChat::AddContextMenu method. When ANY menu item is clicked and that menu item belongs to ANY plugin, this event is fired for ALL plugins. Plugins MUST cache the menu ID return from the AddContextMenu method and check the event value against it to see if it's the appropriate menu item.
+    
+    @param ID The Menu ID of the menu which was clicked.
+    **/
+    HRESULT _stdcall onContextMenu([in] BSTR ID );
+    [
+    id(0x00000005)
+    ]
+    /** 
+    A new message has been received for this window. 
+    @param Body The plaintext version of the message.
+    @param xml The entire packet as serialized XML.
+    **/
+    HRESULT _stdcall onRecvMessage([in] BSTR Body, [in] BSTR xml );
+    [
+    id(0x00000006)
+    ]
+    /** 
+    This event fires when the window is closed. Plugins MUST call IExodusChat::UnRegister when this event occurs to make sure COM RefCounting is accomplished properly.
+    **/
+    HRESULT _stdcall onClose( void );
+    [
+    id(0x000000C9)
+    ]
+    /** 
+    This event fires
+    **/
+    HRESULT _stdcall onMenu([in] BSTR ID );
+    [
+    id(0x000000CA)
+    ]
+    /** 
+    Chat windows have an in-memory lifespan which is longer than the visibility of the actual window depending on the user's preferences. When a chat window is closed and NOT released from memory, and the user re-opens that chat session, or receives another message from that entity, a new window is created. This event will be called when this happens.
+    
+    @param HWND The window handle of the new window.
+    **/
+    HRESULT _stdcall onNewWindow([in] long HWND );
+  };
+
+  [
+    uuid(438DF52E-F892-456B-9FB0-3C64DBB85240),
+    version(1.0),
+    helpstring("ExodusRoster Object")
+  ]
+  coclass ExodusRoster
+  {
+    [default] interface IExodusRoster;
+  };
+
+  [
+    uuid(41BB1EC9-3299-45C3-BBA9-7DD897F29826),
+    version(1.0),
+    helpstring("ExodusPPDB Object")
+  ]
+  coclass ExodusPPDB
+  {
+    [default] interface IExodusPPDB;
+  };
+
+  [
+    uuid(F710F80C-C74A-4A69-8D2B-023504125B96),
+    version(1.0),
+    helpstring("Dispatch interface for ExodusRosterItem Object"),
+    dual,
+    oleautomation
+  ]
+  /**
+  The COM interface used to manipulate roster items in the client. 
+  */
+   interface IExodusRosterItem: IDispatch
+  {
+    [
+    propget,
+    id(0x00000001)
+    ]
+    /**
+    Getter method for the jid.
+    @return The jabber ID of the roster item.
+    **/
+    HRESULT _stdcall JabberID([out, retval] BSTR * Value );
+    [
+    propput,
+    id(0x00000001)
+    ]
+    /**
+    Setter method for the jid.
+    @param Value The new jid for this roster item. Note that you should only ever set this when creating new roster items.
+    **/
+    HRESULT _stdcall JabberID([in] BSTR Value );
+    [
+    propget,
+    id(0x00000002)
+    ]
+    /**
+    Getter method for the subscription attribute.
+    @param Value Can be either: blank, from, to, or both. Depends on the current presence subscription state.
+    **/
+    HRESULT _stdcall Subscription([out, retval] BSTR * Value );
+    [
+    propput,
+    id(0x00000002)
+    ]
+    /**
+    Setter method for setting the subscription attribute. The only valid option here is to set the subscription to "remove" and call update.
+    @param Value The new subscription value.
+    **/
+    HRESULT _stdcall Subscription([in] BSTR Value );
+    [
+    propget,
+    id(0x00000004)
+    ]
+    /**
+    Getter method for the current "ask" attribute.
+    @return The current ask attribute. Can be either blank, or subscribe.
+    **/
+    HRESULT _stdcall Ask([out, retval] BSTR * Value );
+    [
+    propget,
+    id(0x00000005)
+    ]
+    /**
+    @return The total number of groups this entry is in.
+    **/
+    HRESULT _stdcall GroupCount([out, retval] long * Value );
+    [
+    id(0x00000006)
+    ]
+    /**
+    @param Index Get the name of a specific group.
+    @return The name of the group.
+    **/
+    HRESULT _stdcall Group([in] long Index, [out, retval] BSTR * Value );
+    [
+    id(0x00000007)
+    ]
+    /**
+    @return Get an xml representation of this roster item.
+    **/
+    HRESULT _stdcall xml([out, retval] BSTR * xml );
+    [
+    id(0x00000008)
+    ]
+    /**
+    Remove this roster entry. This has the same affect as setting the subscription attribute to "remove" and calling the Update method.
+    **/
+    HRESULT _stdcall Remove( void );
+    [
+    id(0x00000009)
+    ]
+    /**
+    Send the current roster item to the server. 
+    **/
+    HRESULT _stdcall Update( void );
+    [
+    propget,
+    id(0x0000000A)
+    ]
+    /**
+    Getter method for the nickname.
+    @return The current nickname of the entry.
+    **/
+    HRESULT _stdcall nickname([out, retval] BSTR * Value );
+    [
+    propput,
+    id(0x0000000A)
+    ]
+    /**
+    Setter method for the nickname. Set this value, then call Update to make sure the new roster item is sent to the server.
+    @param Value The new nickname
+    **/
+    HRESULT _stdcall nickname([in] BSTR Value );
+    [
+    propget,
+    id(0x0000000B)
+    ]
+    /**
+    **/
+    HRESULT _stdcall RawNickname([out, retval] BSTR * Value );
+  };
+
+  [
+    uuid(9C6A0965-39B0-4D72-A143-D210FB1BA988),
+    version(1.0),
+    helpstring("ExodusRosterItem Object")
+  ]
+  coclass ExodusRosterItem
+  {
+    [default] interface IExodusRosterItem;
+  };
+
+  [
+    uuid(D2FD3425-40CE-469F-A95C-1C80B7FF3119),
+    version(1.0),
+    helpstring("Dispatch interface for ExodusPresence Object"),
+    dual,
+    oleautomation
+  ]
+  /**
+  The IExodusPresence interface is used for entries in the IExodusPPDB presence cache.
+  */
+   interface IExodusPresence: IDispatch
+  {
+    [
+    propget,
+    id(0x00000001)
+    ]
+    /** 
+    @return Type of presence
+    **/
+    HRESULT _stdcall PresType([out, retval] BSTR * Value );
+    [
+    propput,
+    id(0x00000001)
+    ]
+    /**
+    @param Value The new value for type. Can be blank, or "unavailable".
+    **/
+    HRESULT _stdcall PresType([in] BSTR Value );
+    [
+    propget,
+    id(0x00000002)
+    ]
+    /**
+    @return Contents of the status element.
+    **/
+    HRESULT _stdcall Status([out, retval] BSTR * Value );
+    [
+    propput,
+    id(0x00000002)
+    ]
+    /**
+    @param Value The new value for the status element.
+    **/
+    HRESULT _stdcall Status([in] BSTR Value );
+    [
+    propget,
+    id(0x00000003)
+    ]
+    /**
+    @return Contents of the show element. MUST be either: blank, chat, away, xa, or dnd.
+    **/
+    HRESULT _stdcall Show([out, retval] BSTR * Value );
+    [
+    propput,
+    id(0x00000003)
+    ]
+    /**
+    @paramValue The new value of the show element. MUST be either: blank, chat, away, xa, or dnd.
+    **/
+    HRESULT _stdcall Show([in] BSTR Value );
+    [
+    propget,
+    id(0x00000004)
+    ]
+    /**
+    @return The current priority value.
+    **/
+    HRESULT _stdcall Priority([out, retval] long * Value );
+    [
+    propput,
+    id(0x00000004)
+    ]
+    /**
+    @param Value The new priority value.
+    **/
+    HRESULT _stdcall Priority([in] long Value );
+    [
+    propget,
+    id(0x00000005)
+    ]
+    /** 
+    @return The contents of the error element if type is error.
+    **/
+    HRESULT _stdcall ErrorString([out, retval] BSTR * Value );
+    [
+    propput,
+    id(0x00000005)
+    ]
+    /**
+    @param Value The new contents of the error element.
+    **/
+    HRESULT _stdcall ErrorString([in] BSTR Value );
+    [
+    id(0x00000006)
+    ]
+    /**
+    @return The XML representation of this presence stanza.
+    **/
+    HRESULT _stdcall xml([out, retval] BSTR * xml );
+    [
+    id(0x00000007)
+    ]
+    /**
+    @return Is this presence packet subscription related?
+    **/
+    HRESULT _stdcall isSubscription([out, retval] VARIANT_BOOL * Subscription );
+    [
+    propget,
+    id(0x00000008)
+    ]
+    /**
+    @return The value of the to attribute.
+    **/
+    HRESULT _stdcall toJid([out, retval] BSTR * Value );
+    [
+    propput,
+    id(0x00000008)
+    ]
+    /** 
+    @param Value The new value for the to attribute.
+    **/
+    HRESULT _stdcall toJid([in] BSTR Value );
+    [
+    propget,
+    id(0x00000009)
+    ]
+    /**
+    @return The value of the from attribute.
+    **/
+    HRESULT _stdcall fromJid([out, retval] BSTR * Value );
+    [
+    propput,
+    id(0x00000009)
+    ]
+    /**
+    @param Value The new value of the from attribute.
+    **/
+    HRESULT _stdcall fromJid([in] BSTR Value );
+  };
+
+  [
+    uuid(B9EED6FA-AB95-48CA-B485-1AF7E3CC0D0B),
+    version(1.0),
+    helpstring("ExodusPresence Object")
+  ]
+  coclass ExodusPresence
+  {
+    [default] interface IExodusPresence;
+  };
+
+  [
+    uuid(1E010B88-4A61-4185-A243-A6283A26C80E),
+    version(1.0)
+  ]
+  /**
+  */
+  typedef enum tagActiveItem
+  {
+    RosterItem = 0,
+    Bookmark = 1,
+    Group = 2
+  } ActiveItem;
+
+  [
+    uuid(D33EA5B9-23FD-4E43-B5B7-3CCFD0F5CDD0),
+    version(1.0),
+    dual,
+    oleautomation
+  ]
+  /**
+  Plugins should implement this interface if they desire to provide a new alternate method of authenticating with the jabber server.  Plugins should use the IExodusController::setPluginAuth method to set the authentication plugin before the user is ever allowed to connect to the server. These events will fire when your plugin should take appropriate authentication actions.
+  */
+   interface IExodusAuth: IDispatch
+  {
+    [
+    id(0x00000001)
+    ]
+    /**
+    Start the authentication process. Use the get methods of IExodusController to find the current username, password, etc.. Plugins should register for incoming packets and call IExodusController::setAuthenticated once the authentication process has been successful. If the plugin needs to specify the jabber ID of the authenticated entity, it should call IExodusController::setAuthJID to specify it.
+    **/
+    HRESULT _stdcall StartAuth( void );
+    [
+    id(0x00000002)
+    ]
+    /**
+    This event will fire if the user cancels the authentication process, or shuts the client down before setAuthenticated is called.
+    **/
+    HRESULT _stdcall CancelAuth( void );
+    [
+    id(0x00000003)
+    ]
+    /**
+    If the user needs to register a new account, this event will be called. If your custom authentication modules does not support register return false. Otherwise, register for the appropriate packets and call setAuthenticated when complete.
+    @return Return true if the registration process has started. False if registration is not supported.
+    **/
+    HRESULT _stdcall StartRegistration([out, retval] VARIANT_BOOL * RegSupported );
+    [
+    id(0x00000004)
+    ]
+    /**
+    This event will fire if the user cancels the registration process, or shuts the client down before setAuthenticated is called.
+    **/
+    HRESULT _stdcall CancelRegistration( void );
+  };
+
+  [
+    uuid(47213401-DAB2-4560-82F7-E5AB15C34397),
+    version(1.0),
+    helpstring("Dispatch interface for ExodusController Object"),
+    dual,
+    oleautomation
+  ] 
+  /**
+  This interface is the main interface provided to plugins to allow them to manipulate the Exodus client itself.
+  */
+   interface IExodusController: IDispatch
+  {
+
+    /**
+    @name Session Properties 
+    IExodusController properties about the client and current session.
+    **/
+    //@{        
+    [
+    propget,
+    id(0x00000001)
+    ]
+    /**
+    @return Is the session currently connected or not.
+    **/
+    HRESULT _stdcall Connected([out, retval] VARIANT_BOOL * Value );
+    [
+    propget,
+    id(0x00000002)
+    ]
+    /**
+    @return The username part of the jid for the current profile.
+    **/
+    HRESULT _stdcall Username([out, retval] BSTR * Value );
+    [
+    propget,
+    id(0x00000003)
+    ]
+    /**
+    @return The hostname part of the jid for the current profile.
+    **/
+    HRESULT _stdcall Server([out, retval] BSTR * Value );
+    [
+    id(0x0000000D)
+    ]
+    /**
+    Loads the specified profile into the session. MUST NOT be connected while performing this operation.
+    @param jid The jid of the profile to load.
+    **/
+    HRESULT _stdcall GetProfile([in] BSTR jid );
+    [
+    propget,
+    id(0x00000018)
+    ]
+    /**
+    @return The resource part of the jid for the current profile.
+    **/
+    HRESULT _stdcall resource([out, retval] BSTR * Value );
+    [
+    propget,
+    id(0x00000019)
+    ]
+    /**
+    @return The port number for the current profile.
+    **/
+    HRESULT _stdcall Port([out, retval] long * Value );
+    [
+    propget,
+    id(0x0000001A)
+    ]
+    /**
+    @return The current presence priority.
+    **/
+    HRESULT _stdcall Priority([out, retval] long * Value );
+    [
+    propget,
+    id(0x0000001E)
+    ]
+    /**
+    @return Is the client currently "paused". This occurs when the client goes into an auto-away or auto-xa state. All events are paused, then replayed when the user comes back. Notifications do not occur while the session is paused.
+    **/
+    HRESULT _stdcall IsPaused([out, retval] VARIANT_BOOL * Value );
+    [
+    propget,
+    id(0x0000001F)
+    ]
+    /**
+    @return Is the current profile logged in as invisible or not.
+    **/
+    HRESULT _stdcall IsInvisible([out, retval] VARIANT_BOOL * Value );
+    [
+    id(0x00000020)
+    ]
+    /**
+    Start the connection process. Plugins should register for '/session' events if you wish to be notified of connection related states (connected, authenticated, disconnected, etc..)
+    **/
+    HRESULT _stdcall Connect( void );
+    [
+    id(0x00000021)
+    ]
+    /**
+    Disconnect the current session.
+    **/
+    HRESULT _stdcall Disconnect( void );
+    [
+    propget,
+    id(0x00000036)
+    ]
+    /**
+    @return Get the current object model (interface) for the Roster.
+    **/
+    HRESULT _stdcall Roster([out, retval] IExodusRoster ** Value /*Warning: unable to validate structure name: */ );
+    [
+    propget,
+    id(0x00000037)
+    ]
+    /**
+    @return Get the current object model (interface) for the presence proxy database (aka. presence cache, aka PPDB).
+    **/
+    HRESULT _stdcall PPDB([out, retval] IExodusPPDB ** Value /*Warning: unable to validate structure name: */ );
+    [
+    propget,
+    id(0x00000040)
+    ]
+    /**
+    @return Get the current IP that the client is using.
+    **/
+    HRESULT _stdcall LocalIP([out, retval] BSTR * Value );
+    
+    //@}
+    
+    
+    /**
+    @name Stream Methods
+    XML Stream related methods.
+    **/
+    //@{        
+    /**
+    Register your plugin to receive packets which match a specific xpath-like expression. The following are SAMPLES of some of the expressions you may use:
+        - /session - Catch all session related events. In these cases there will be no stanza returned in the event.
+        - /packet/message[\@type="headline"] - Catch all headline messages.
+        - /packet/iq[\@id="my_id"] - Catch all iq packets which have this ID attribute.
+    .
+    Note that exodus does not include a COMPLETE xpath parser. You may use any variations of the samples show above. Note that you should use /packet whenever attempting to catch incoming packets from the socket. All of the "top level" strings which you may use are as follows:
+        - /session - Session and connection related details. Events will occur like /session/connected, /session/prefs, etc..
+        - /packet - Catch any generic packet.
+        - /roster - Catch new roster item pushes, and full roster results.
+        - /presence - Catch presence packets coming into the system.
+        - /windows - Catch windows events related to a specific window.        
+        
+    @param xpath The xpath expression to use for this callback.
+    @param callback The IExodusPlugin object which will receive the events.
+    @return ID Cache the returned ID and use it when calling UnRegister.
+    **/
+    [
+    id(0x00000004)
+    ]
+    HRESULT _stdcall RegisterCallback([in] BSTR xpath, [in] IExodusPlugin * callback /*Warning: unable to validate structure name: */, [out, retval] long * ID );
+    [
+    id(0x00000005)
+    ]
+    /**
+    UnRegister a previously registered stream callback.
+    @param ID The callback ID which was returned when you registered the callback.
+    **/
+    HRESULT _stdcall UnRegisterCallback([in] long ID );
+    [
+    id(0x00000006)
+    ]
+    /**
+    Send some data out the socket to the jabber server.
+    @param xml The well formed XML to send. This MUST be well formed as exodus does not enforce this. If you send not well formed XML, the server will disconnect you.
+    **/
+    HRESULT _stdcall Send([in] BSTR xml );
+    [
+    id(0x00000014)
+    ]
+    /**
+    Generate an ID to use in your XML using the same internal ID generator that the rest of the client uses.
+    @return The next ID in the current sequence.
+    **/
+    HRESULT _stdcall generateID([out, retval] BSTR * ID );
+    //@}
+    
+    
+    /**
+    @name Roster Methods 
+    IExodusController methods for manipulating the roster.
+    **/
+    //@{
+    [
+    id(0x00000007)
+    ]
+    /**
+    @param jid The jid to look for in the roster.
+    @return Is the jid specified in the roster.
+    **/
+    HRESULT _stdcall isRosterJID([in] BSTR jid, [out, retval] VARIANT_BOOL * Value );
+    [
+    id(0x00000008)
+    ]
+    /**
+    @param jid The jid to look for in the roster
+    @return Is there a roster entry for this jid, and is the subscription either "to" or "both".
+    **/
+    HRESULT _stdcall isSubscribed([in] BSTR jid, [out, retval] VARIANT_BOOL * Value );
+    [
+    id(0x0000003E)
+    ]
+    /**
+    @return The currently selected roster item in the roster GUI.
+    **/
+    HRESULT _stdcall getActiveContact([out, retval] BSTR * jid );
+    [
+    id(0x0000003F)
+    ]
+    /**
+    @return The currently selected group in the roster GUI.
+    **/
+    HRESULT _stdcall getActiveGroup([out, retval] BSTR * Name );
+    [
+    id(0x00000041)
+    ]
+    /**
+    This method allows you to get a "|" seperated list of the currently selected contacts in the roster GUI. If you only want the contacts which are online, specify true for the Online param.
+    @param Online False to return all currently selected contacts. True to filter out any offline contacts.
+    @return A String in the form: "foo@bar.com | foo@baz.com" which contains all of the currently selected jids.
+    **/
+    HRESULT _stdcall getActiveContacts([in] VARIANT_BOOL Online, [out, retval] BSTR * JIDS );
+    //@}
+       
+       
+    /**
+    @name Presence Methods
+    IExodusController methods for manipulating the current presence information.
+    **/
+    //@{
+    [
+    id(0x0000000B)
+    ]
+    /**
+    Change the current presence in the client.
+    @param Show The contents of the show element to use. MUST be either: blank (empty string, ""), "chat", "away", "xa", or "dnd".
+    @param Status The extended attribute of the presence. Can be any string but is typically kept relatively short. Like: "I'm in a meeting".
+    @param Priority The new priority of this client. Do not specify to keep the existing priority.
+    **/
+    HRESULT _stdcall ChangePresence([in] BSTR Show, [in] BSTR Status, [in] long Priority );
+    [
+    propget,
+    id(0x0000001C)
+    ]
+    /**
+    @return The current status value of the connected session.
+    **/
+    HRESULT _stdcall PresenceStatus([out, retval] BSTR * Value );
+    [
+    propget,
+    id(0x0000001D)
+    ]
+    /**
+    @return The current show value of the connected session.
+    **/
+    HRESULT _stdcall PresenceShow([out, retval] BSTR * Value );
+    [
+    id(0x00000033)
+    ]
+    /**
+    Change the current presence in the client. Same as changePresence.
+    @param Show The contents of the show element to use. MUST be either: blank (empty string, ""), "chat", "away", "xa", or "dnd".
+    @param Status The extended attribute of the presence. Can be any string but is typically kept relatively short. Like: "I'm in a meeting".
+    @param Priority The new priority of this client. Do not specify to keep the existing priority.     
+    **/
+    HRESULT _stdcall setPresence([in] BSTR Show, [in] BSTR Status, [in] long Priority );      [
+    id(0x00000039)
+    ]
+    /**
+    If a plugin wishes to append some static XML onto every presence packet which goes out from the client, it can do so by using this method.
+    @param xml The well formed static xml to be included into all presence packets.
+    @return ID The id to use when calling removePresenceXML.
+    **/
+    HRESULT _stdcall registerPresenceXML([in] BSTR xml, [out, retval] BSTR * ID );
+    [
+    id(0x0000003A)
+    ]
+    /**
+    UnRegister static XML from outgoing presence so it is no longer appended to those packets.
+    @param ID The id returned from the register call.
+    **/
+    HRESULT _stdcall removePresenceXML([in] BSTR ID );
+  
+    //@}
+    
+    /**
+    @name Menu System Methods 
+    IExodusController methods for manipulating the menu system.
+    **/
+    //@{
+    /**
+    Add a menu item to the main menu under Tools | Plugins.
+    @param Caption The caption for the new menu item.
+    @return The menu item ID used to identify this menu item event from others when receiving onMenu events.
+    **/
+    [
+    id(0x0000000E)
+    ]    
+    HRESULT _stdcall addPluginMenu([in] BSTR Caption, [out, retval] BSTR * ID );
+    [
+    id(0x0000000F)
+    ]
+    /**
+    Remove a plugin menu from Tools | Plugins main menu.
+    @param ID The menu ID received from the register call.
+    **/
+    HRESULT _stdcall removePluginMenu([in] BSTR ID );
+    [
+    id(0x0000003C)
+    ]
+    /**
+    Add a menu item to the right click menu which pops for roster contacts. 
+    @param Caption The caption of the new menu item. 
+    @return The menu item ID used to identify this menu item event from others when receiving onMenu events.
+    **/
+    HRESULT _stdcall addContactMenu([in] BSTR Caption, [out, retval] BSTR * ID );
+    [
+    id(0x0000003D)
+    ]
+    /**
+    Remove a contacts menu item.
+    @param ID The menu item ID received from the addContactMenu method.
+    **/
+    HRESULT _stdcall removeContactMenu([in] BSTR ID );
+    [
+    id(0x000000C9)
+    ]
+    /**
+    Add a menu item to the context menu which is popped up for outgoing "normal" message windows (aka. Instant Messages).
+    @param Caption The caption of the new menu item.
+    @return The menu item ID.
+    **/
+    HRESULT _stdcall addMessageMenu([in] BSTR Caption, [out, retval] BSTR * ID );   
+    //@}
+    
+    /**
+    @name GUI Related Methods
+    IExodusController methods for showing new windows.
+    **/
+    //@{
+    [
+    id(0x0000000C)
+    ]
+    /**
+    Start a new chat window with the specified jid. Resource and nickname can both be blank. Only specify a nickname if you want to NOT use the nickname stored in the roster, or if you want to specify a nickname because this JID is NOT in the roster. (This is useful for chat rooms, where the nick would be the user's nick).
+    
+    @param jid The bare jid (user\@host) of the entity to start chatting with.
+    @param resource The resource of the entity to chat with. May be left blank.
+    @param nickname The nickname to use for this entity. May be left blank.
+    **/
+    HRESULT _stdcall StartChat([in] BSTR jid, [in] BSTR resource, [in] BSTR nickname );
+    [
+    id(0x00000028)
+    ]
+    /**
+    Find an existing chat window for this JID (and resource) combination.
+    @param JabberID The bare jid (user\@host) of the entity to look for. 
+    @param resource The resource part of the jid of the entity.
+    @return The HWND of the window. 0 is returned if no windows are found for this user.
+    **/
+    HRESULT _stdcall findChat([in] BSTR JabberID, [in] BSTR resource, [out, retval] long * Handle );
+    [
+    id(0x00000029)
+    ]
+    /**
+    Start a search window using the specified JID as the search agent.
+    @param SearchJID The jid of the agent to use for searching.
+    **/
+    HRESULT _stdcall startSearch([in] BSTR SearchJID );
+    [
+    id(0x0000002A)
+    ]
+    /**
+    Start a new chat room.
+    @param RoomJID The room\@server jid of the room.
+    @param nickname The nickname to use when joining the room.
+    @param Password The password which is required to join the room. Should be left blank if no password is required.
+    **/
+    HRESULT _stdcall startRoom([in] BSTR RoomJID, [in] BSTR nickname, [in] BSTR Password );
+    [
+    id(0x0000002B)
+    ]
+    /**
+    Start a new IM window (not a chat window).
+    @param JabberID The jid of the entity to send a message to.
+    **/
+    HRESULT _stdcall startInstantMsg([in] BSTR JabberID );
+    [
+    id(0x0000002C)
+    ]
+    /**
+    Start a new browser window, using the specified jid.
+    @param BrowseJID The jid of the entity to browse.
+    **/
+    HRESULT _stdcall startBrowser([in] BSTR BrowseJID );
+    [
+    id(0x0000002D)
+    ]
+    /**
+    Show the Join Room UI.
+    @param RoomJID The room\@service jid to use to pre-populate the window.
+    @param nickname The nickname used to pre-populate the window.
+    @param Password The password used to pre-populate the window.
+    **/
+    HRESULT _stdcall showJoinRoom([in] BSTR RoomJID, [in] BSTR nickname, [in] BSTR Password );
+    [
+    id(0x0000002E)
+    ]
+    /**
+    Show the preferences window.
+    **/
+    HRESULT _stdcall showPrefs( void );
+    [
+    id(0x0000002F)
+    ]
+    /**
+    Show the custom presence window.
+    **/
+    HRESULT _stdcall showCustomPresDialog( void );
+    [
+    id(0x00000030)
+    ]
+    /**
+    Make sure the debug XML window is showing.
+    **/
+    HRESULT _stdcall showDebug( void );
+    [
+    id(0x00000031)
+    ]
+    /**
+    Show the login window. Note that you SHOULD check the connected property before just calling this method.
+    **/
+    HRESULT _stdcall showLogin( void );
+    [
+    id(0x00000032)
+    ]
+    /**
+    Show a popup toast window.
+    @param Message The text message to display in the toast window.
+    @param wndHandle The HWND of a window to "link" to the toast window. If the toast is clicked, the HWND specified will be brought to the top.
+    @param imageIndex The index of the image to show in the toast window.
+    **/
+    HRESULT _stdcall showToast([in] BSTR Message, [in] long wndHandle, [in] long imageIndex );
+    
+    //@}
+    
+        
+    /**
+    @name Contact Blocking Methods
+    IExodusController methods for blocking and unblocking contacts.
+    **/
+    //@{
+    [
+    id(0x00000015)
+    ]
+    /**
+    Check to see if a jid is currently being blocked (client side).
+    @return True if the jid is blocked, false, otherwise.
+    **/
+    HRESULT _stdcall isBlocked([in] BSTR JabberID, [out, retval] VARIANT_BOOL * Blocked );
+    [
+    id(0x00000016)
+    ]
+    /**
+    Block the specified JID. This means the client will drop any packets FROM this jabber id.
+    @param JabberID The jid to block.
+    **/
+    HRESULT _stdcall Block([in] BSTR JabberID );
+    [
+    id(0x00000017)
+    ]
+    /**
+    UnBlock the specified JID. Packets from this jid will no longer be blocked.
+    @param JabberID The jid to unblock.
+    **/
+    HRESULT _stdcall UnBlock([in] BSTR JabberID );
+    //@}
+    
+    
+    /**
+    @name Preference Methods 
+    IExodusController methods for getting and setting preference values.
+    **/
+    //@{
+    [
+    id(0x00000022)
+    ]
+    /**
+    Get a preference as a string. Preferences are always stored as name-value pairs. 
+    @param Key The key of the preference to lookup. 
+    @return The current value. If the key does not exist, a default value (or '0') will be returned.
+    **/
+    HRESULT _stdcall getPrefAsString([in] BSTR Key, [out, retval] BSTR * Value );
+    [
+    id(0x00000023)
+    ]
+    /**
+    @param Key The key of the preference to lookup. 
+    @return The current value. If the key does not exist, a default value (or 0) will be returned.
+    **/
+    HRESULT _stdcall getPrefAsInt([in] BSTR Key, [out, retval] long * Value );
+    [
+    id(0x00000024)
+    ]
+    /**
+    @param Key The key of the preference to lookup. 
+    @return The current value. If the key does not exist, a default value (or false) will be returned.    
+    **/
+    HRESULT _stdcall getPrefAsBool([in] BSTR Key, [out, retval] VARIANT_BOOL * Value );
+    [
+    id(0x00000025)
+    ]
+    /**
+    Store a preference as a string.
+    @param Key The key of the preference to store.
+    @param Value The new value of the preference.    
+    **/
+    HRESULT _stdcall setPrefAsString([in] BSTR Key, [in] BSTR Value );
+    [
+    id(0x00000026)
+    ]
+    /**
+    Store a preference as an integer.
+    @param Key The key of the preference to store.
+    @param Value The new value of the preference.    
+    **/
+    HRESULT _stdcall setPrefAsInt([in] BSTR Key, [in] long Value );
+    [
+    id(0x00000027)
+    ]
+    /**
+    Store a preference as a boolean.
+    @param Key The key of the preference to store.
+    @param Value The new value of the preference.    
+    **/
+    HRESULT _stdcall setPrefAsBool([in] BSTR Key, [in] VARIANT_BOOL Value );
+    
+    //@}
+    
+    /**
+    @name Auto-Responder Methods
+    IExodusController methods to Manipulate auto-response information (browse, disco, etc..)
+    **/
+    //@{
+    [
+    id(0x00000009)
+    ]
+    /**
+    If your plugin responds to a namespace which is not normally "advertised" by Exodus, use this method to add your custom namespace to the list of namespaces sent in browse results.
+    @param Namespace The new namespace to send back in browse results.
+    @return ID The identifier to use when removing this item.
+    **/
+    HRESULT _stdcall registerBrowseNS([in] BSTR Namespace, [out, retval] BSTR * ID );
+    [
+    id(0x0000000A)
+    ]
+    /**
+    Add a new disco item to those normally sent in disco#items results.
+    @param JabberID The jid of the item.
+    @param Name The name attribute to use for the disco item.
+    @return ID The identifier to use when removing this item.
+    **/
+    HRESULT _stdcall registerDiscoItem([in] BSTR JabberID, [in] BSTR Name, [out, retval] BSTR * ID );
+    [
+    id(0x0000001B)
+    ]
+    /**
+    Add a new disco feature to those normally sent in disco#info results.
+    @param Feature The contents of the var attribute to send.
+    @return ID The identifier to use when removing this item.
+    **/
+    HRESULT _stdcall registerDiscoFeature([in] BSTR Feature, [out, retval] BSTR * ID );
+    [
+    id(0x00000034)
+    ]
+    /**
+    Remove a browse namespace previously registered. 
+    @param ID The identifier received from registerBrowseNS.
+    **/
+    HRESULT _stdcall removeBrowseNS([in] BSTR ID );
+    [
+    id(0x00000035)
+    ]
+    /**
+    Remove a disco item previously registered. 
+    @param ID The identifier received from registerDiscoItem.
+    **/
+    HRESULT _stdcall removeDiscoItem([in] BSTR ID );
+    [
+    id(0x00000038)
+    ]
+    /**
+    Remove a disco feature previously registered. 
+    @param ID The identifier received from registerDiscoFeature.
+    **/
+    HRESULT _stdcall removeDiscoFeature([in] BSTR ID );
+    
+    //@}
+    
+    /**
+    @name Agent List Methods
+    IExodusController methods to manipulate agents list information.  
+    **/
+    //@{
+    [
+    id(0x00000012)
+    ]
+    /**
+    Send a agents query to the specified server. The results will be cached in the global session cache of agent lists.
+    @param Server The hostname to send the agents query to.
+    **/
+    HRESULT _stdcall getAgentList([in] BSTR Server );
+    [
+    id(0x00000013)
+    ]
+    /**
+    Get the jabber id of a service on a remote host. This method will lookup the service in the agents list and return the jid.
+    @param Server The hostname to use when searching for the service.
+    @param Service The contents of the service element to search for.
+    @return The jabber ID of the service found. Empty if no service is found.
+    **/
+    HRESULT _stdcall getAgentService([in] BSTR Server, [in] BSTR Service, [out, retval] BSTR * JabberID );    
+    //@}   
+
+    /**
+    @name Auth Plugin Methods
+    IExodusController methods for the Authentication plugin system.
+    **/    
+    //@{    
+    [
+    id(0x00000042)
+    ]
+    /**
+    If your plugin provides an alternate authentication mechanism, use this call to inform the session object. This MUST be called while the session is disconnected (check the connected property first). The object which is passed in MUST implement the IExodusAuth interface which is used to receive authentication events.
+    @param AuthAgent The object which implements the IExodusAuth interface.
+    **/
+    HRESULT _stdcall setPluginAuth([in] IExodusAuth * AuthAgent /*Warning: unable to validate structure name: */ );
+    [
+    id(0x00000043)
+    ]
+    /**
+    Once your plugin completes it's authentication process, call this method to inform the rest of the client that the session has been authenticated. 
+    @param Authed True if authentication was successful. False if authenticated failed.
+    @param xml The last packet received as part of the authentication sequence. May be empty if not applicable.
+    **/
+    HRESULT _stdcall setAuthenticated([in] VARIANT_BOOL Authed, [in] BSTR xml );
+    [
+    id(0x00000044)
+    ]
+    /**
+    If your authentication mechanism does not use username/password, and the jid is unknown until after the authentication has completed, use this method to inform the client of the actual JID of the client. 
+    @param Username The username of the authenticated entity.
+    @param Host The hostname of the authenticated entity.
+    @param resource The resource of the authenticated entity.
+    **/
+    HRESULT _stdcall setAuthJID([in] BSTR Username, [in] BSTR Host, [in] BSTR resource );
+    
+    //@}    
+    
+    /**
+    @name Undocumented Methods
+    Use at your own risk, and/or UTSL.
+    **/
+    //@{
+    [
+    id(0x00000010)
+    ]
+    HRESULT _stdcall CreateDockableWindow([in] long HWND, [in] BSTR Caption );
+    [
+    id(0x00000011)
+    ]
+    HRESULT _stdcall monitorImplicitRegJID([in] BSTR JabberID, [in] VARIANT_BOOL FullJID );
+    [
+    id(0x0000003B)
+    ]
+    HRESULT _stdcall trackWindowsMsg([in] long Message );
+    //@}
+
+    
+  };
+
+  [
+    uuid(27176DA5-4EEB-442F-9B1F-D25EF948B9CB),
+    version(1.0),
+    helpstring("Dispatch interface for ExodusChat Object"),
+    dual,
+    oleautomation
+  ]
+  /**
+A COM object which is used to manipulate chats, rooms, and IM windows. A reference to this object will be passed into the IExodusPlugin interface on the various New* events.
+  */
+   interface IExodusChat: IDispatch
+  {
+    [
+    propget,
+    id(0x00000001)
+    ]
+    /**
+    Get the jabber id of the room or user which is represented by this window.
+    **/
+    HRESULT _stdcall jid([out, retval] BSTR * Value );
+    [
+    id(0x00000002)
+    ]
+    /**
+    Add a menu item to the context popup for this window.
+
+    @param Caption The caption of the menu item.
+    @return The ID of the menu item. The plugin should cache this value and compare it when the click event fires.
+    **/
+    HRESULT _stdcall AddContextMenu([in] BSTR Caption, [out, retval] BSTR * ID );
+    [
+    propget,
+    id(0x00000004)
+    ]
+    /**
+    The outgoing message has changed to this text.
+    **/
+    HRESULT _stdcall MsgOutText([out, retval] BSTR * Value );
+    [
+    id(0x00000003)
+    ]
+    /**
+    Register a plugin with this window.
+    @param Plugin The plugin to register with this window. It must implement the IExodusChatPlugin interface.
+    **/
+    HRESULT _stdcall RegisterPlugin([in] IExodusChatPlugin * Plugin /*Warning: unable to validate structure name: */, [out, retval] long * ID );
+    [
+    id(0x00000005)
+    ]
+    /**
+    Unregister a plugin from the window.
+    @param ID The plugin ID received during registration.
+    @return Whether or not the unregister call was successful.
+    **/
+    HRESULT _stdcall UnRegister([in] long ID, [out, retval] VARIANT_BOOL * Success );
+    [
+    id(0x00000006)
+    ]
+    /**
+    Use at your own peril.
+    @return Some magic integer representing something.
+    **/
+    HRESULT _stdcall getMagicInt([in] ChatParts Part /*Warning: unable to validate structure name: */, [out, retval] long * Value );
+    [
+    id(0x00000007)
+    ]
+    /**
+    Remove a previously registered context menu.
+    @param ID The menu id received when the menu item was added
+    **/
+    HRESULT _stdcall RemoveContextMenu([in] BSTR ID );
+    [
+    id(0x000000C9)
+    ]
+    /**
+    Add Msg out
+    **/
+    HRESULT _stdcall AddMsgOut([in] BSTR Value );
+    [
+    id(0x000000CA)
+    ]
+    /**
+    Add a popup menu to the right-click popup for the outgoing message section
+    of the window.
+    @param Caption The caption of the menu item.
+    @return The menu id to catch.
+    **/
+    HRESULT _stdcall AddMsgOutMenu([in] BSTR Caption, [out, retval] BSTR * MenuID );
+    [
+    id(0x000000CB)
+    ]
+    /**
+    Remove a previously registered menu item.
+    @param ID The menu id.
+    **/
+    HRESULT _stdcall RemoveMsgOutMenu([in] BSTR MenuID );
+  };
+
+  [
+    uuid(72470D1C-9A66-4735-A7CF-446F43561C92),
+    version(1.0),
+    helpstring("Dispatch interface for ExodusPlugin Object"),
+    dual,
+    oleautomation
+  ]
+  /**
+    IExodusPlugin is the core interface that is used by exodus, and MUST be implemented by all plugins.
+  */
+   interface IExodusPlugin: IDispatch
+  {
+    [
+    id(0x00000001),
+    helpstring("Exodus is starting the plugin")
+    ]
+    /**
+    This method is called by exodus after it has instantiated an instance of the plugin.
+
+    @param ExodusController The COM Object which represents the Exodus application.
+    Plugins will most likely want to cache this object in order to make other calls back to the exodus application itself.
+    **/
+    HRESULT _stdcall Startup([in] IExodusController * ExodusController /*Warning: unable to validate structure name: */ );
+    [
+    id(0x00000002),
+    helpstring("Exodus is shutting down the plugin")
+    ]
+    /**
+This method is called whenever the plugin is being shutdown. Possible reasons for this may be that the application is shutting down (very common) or the user has selected to disable this particular plugin. You should make sure that all refcounts are decremented such that the exodus process can be completely freed if the application is exiting.
+    **/
+    HRESULT _stdcall Shutdown( void );
+    [
+    id(0x00000003),
+    helpstring("Plugin is receiving a packet")
+    ]
+    /**
+When a plugin registers to receive packets (by calling RegisterCallback), exodus will call this method for every packet which matches the provided xpath statement.
+
+    @param xpath This parameter allows a plugin to register for multiple callbacks, and be notified which one has matched.
+    @param event Event will almost always be the string "xml" or possibly "timeout".
+    @param xml A BSTR containing the raw serialized XML. Plugins are responsible for re-parsing the serialized XML if a DOM object is required.
+    **/
+    HRESULT _stdcall Process([in] BSTR xpath, [in] BSTR event, [in] BSTR xml );
+    [
+    id(0x00000004),
+    helpstring("A new chat window is starting")
+    ]
+    /**
+When a new chat window is started by either the user, or an incoming message element, this method is called. If a plugin wishes to add functionality to this chat window, it should register with the IExodusChat object passed as the second parameter. Typically, plugins which are interested in chat windows will wish to instantiate some other COM object for each window. The main plugin should use this event to do this, and register the new object instance with the chat object passed in.
+
+    @param jid The JID of the party sending messages into this chat window.
+    @param Chat The COM object which can be used to manipulate the window or this specific chat controller.
+    **/
+    HRESULT _stdcall NewChat([in] BSTR jid, [in] IExodusChat * Chat /*Warning: unable to validate structure name: */ );
+    [
+    id(0x00000005),
+    helpstring("A new room is starting")
+    ]
+    /**
+Almost identical to the NewChat event, but fired when new conference rooms are started. The same IExodusChat controller is used to manipulate the room object.
+
+    @param jid The JID of the room.
+    @param Room The COM object which can be used to manipulate the window or this specific room controller.
+    **/
+    HRESULT _stdcall NewRoom([in] BSTR jid, [in] IExodusChat * Room /*Warning: unable to validate structure name: */ );
+    [
+    id(0x00000008),
+    helpstring("A New IM is about to go out.")
+    ]
+    /**
+This event is fired whenever an IM message (not a chat or groupchat) is being sent from the system. This includes messages like room invites, and roster items being sent. Plugins are allowed to change the value of the Body and Subject paramaters if necessary.
+
+    @param jid The jabber ID of where the message is being sent to.
+    @param Body The current body of the message. Plugins may modify this parameter.
+    @param Subject The current subject of the message. Plugins may modify this parameter.
+    @param XTags The current string representing all xtags being appending to the outgoing message.
+    @return Plugins should return WELL-FORMED XML as a return value if that plugin needs to append additional elements into the message stanza. For example, a plugin could return: &lt;x xmlns="foo"&gt;Some CDATA&lt;/x&gt; and have that x tag be inserted into the outgoing message.
+    **/
+    HRESULT _stdcall NewIM([in] BSTR jid, [in] BSTR * Body, [in] BSTR * Subject, [in] BSTR XTags, [out, retval] BSTR * AddXML );
+    [
+    id(0x0000000C),
+    helpstring("The plugin should configure itself")
+    ]
+    /**
+Exodus calls this method from the plugin options window where the user can configure a specific plugin. Plugins should display some kind of configuration dialog and allow the user to specific options. In order to persist options (preferences), plugins can use the appropriate <a href="controller.html">IExodusController</a> methods (such as getPrefAsString and setPrefAsString) to persist options directly to the exodus.xml file in the user's profile.
+    **/
+    HRESULT _stdcall Configure( void );
+    [
+    id(0x000000C9)
+    ]
+    /**
+Plugins are allowed to add menu items into the main menu under the Tools | Plugins selection. When a menu item is clicked which belongs to <em>any</em> plugin, this method is fired for all plugins. Plugins MUST cache the ID's which are returned from the AddPluginMenu method or from the AddContactMenu method.
+
+    @param ID The ID of the menu item being clicked. When this method is called, compare the ID passed to the cached id's of the menu items that your plugin added, and act accordingly.
+    **/
+    HRESULT _stdcall MenuClick([in] BSTR ID );
+    [
+    id(0x000000CA)
+    ]
+    /**
+Plugins are also allowed to add menu items to the context menu for Instant Message (IM) windows. This event is fired whenever one of these menu items is clicked which belongs to <em>any</em> plugin. Similar to the MenuClick event, plugins should cache the ID which they receive from addMessageMenu method.
+
+    @param ID The idenitifer of the menu clicked.
+    @param jid The jabber id of the recipient of the mesage.
+    @param Body The current body of the message. The plugin may modify this parameter.
+    @param Subject The current subject of the message. The plugin may modify this parameter.
+    **/
+    HRESULT _stdcall MsgMenuClick([in] BSTR ID, [in] BSTR jid, [in] BSTR * Body, [in] BSTR * Subject );
+    [
+    id(0x000000CB)
+    ]
+    /**
+Almost identical to the NewChat event, but fired when a new instant message window is opened. The same IExodusChat controller is used to get events and manipulate the IM window.
+
+    @param jid The jabber ID of the recipient.
+    @param InstantMsg The COM object which can be used to manipulate the message window.
+    **/
+    HRESULT _stdcall NewOutgoingIM([in] BSTR jid, [in] IExodusChat * InstantMsg /*Warning: unable to validate structure name: */ );
+  };
+
+  [
+    uuid(29B1C26F-2F13-47D8-91C4-A4A5AC43F4A9),
+    version(1.0),
+    helpstring("Dispatch interface for ExodusRoster Object"),
+    dual,
+    oleautomation
+  ]
+  /**
+    The COM interface which can be used to manipulate the roster.
+  */
+   interface IExodusRoster: IDispatch
+  {
+    [
+    id(0x00000001)
+    ]
+    /**
+    Fetch the roster from the server.
+    **/
+    HRESULT _stdcall Fetch( void );
+    [
+    id(0x00000002)
+    ]
+    /**
+    Force a save of the bookmarks to the private storage on the server.
+    **/
+    HRESULT _stdcall SaveBookmarks( void );
+    [
+    id(0x00000003)
+    ]
+    /**
+    Add a new roster item to the roster.
+
+    @param JabberID The jabber id of the entity to add to the roster.
+    @param nickname The name to use for this roster item.
+    @param Group The initial group to use for this roster item.
+    @param Subscribe Set to true to also send a susbcription request to this jabber entity. Setting to false just adds the item to the roster.
+    **/
+    HRESULT _stdcall AddItem([in] BSTR JabberID, [in] BSTR nickname, [in] BSTR Group, [in] VARIANT_BOOL Subscribe );
+    [
+    id(0x00000004)
+    ]
+    /**
+    Add a new bookmark to the collection of bookmarks.
+
+    @param JabberID The jabber id of the room to store. Should be in the form room\@server.
+    @param bmType Should always be "conference" for now.
+    @param bmName The name of the bookmark. This will display in the roster.
+    @param nickname The nickname to use when joining the room.
+    @param AutoJoin Set to true to force exodus to join the room whenever the user logs in.
+    **/
+    HRESULT _stdcall AddBookmark([in] BSTR JabberID, [in] BSTR bmType, [in] BSTR bmName, [in] BSTR nickname, [in] VARIANT_BOOL AutoJoin );
+    [
+    id(0x00000005)
+    ]
+    /**
+    Remove a bookmark from the roster.
+    @param JabberID The room\@server of jabbber id of the bookmark to remove.
+    **/
+    HRESULT _stdcall RemoveBookmark([in] BSTR JabberID );
+    [
+    id(0x00000006)
+    ]
+    /**
+    Find a roster item in the roster and obtain a COM object pointer to it.
+    **/
+    HRESULT _stdcall Find([in] BSTR JabberID, [out, retval] IExodusRosterItem ** Item /*Warning: unable to validate structure name: */ );
+    [
+    id(0x00000007)
+    ]
+    HRESULT _stdcall Item([in] long Index, [out, retval] IExodusRosterItem ** Item /*Warning: unable to validate structure name: */ );
+    [
+    id(0x00000008)
+    ]
+    HRESULT _stdcall Count([out, retval] long * ItemCount );
+  };
+
+  [
+    uuid(284E49F2-2006-4E48-B0E0-233867A78E54),
+    version(1.0),
+    helpstring("Dispatch interface for ExodusPPDB Object"),
+    dual,
+    oleautomation
+  ]
+  /**
+    IExodusPPDB
+    This interface is used to query the cached presence packets that Exodus receives. All presence packets that come from the server are stored in this "Presence Proxy DataBase" (PPDB). Use this interface to find out if a specific JID is online. 
+    
+    The presence objects that are returned from the PPDB are ordered via priority. Thus, if you ask for a presence object for foo\@bar.com, and that entity has 4 resources online (/work, /home, /pda, /desktop), you will get the presence object for the "primary" resource (the one with the highest priority value). To get the "next" presence object, call Next passing in the bare jid (foo\@bar.com) and the resource (work) for the previous entry you got back.
+    
+    When an unavailable presence packet is received, that entry is removed from the PPDB. Note that the PPDB caches _ALL_ presence packets received by the client, including things like groupchat room presence packets. In that case, all participants appear as resources of the room\@server jid.
+  */
+   interface IExodusPPDB: IDispatch
+  {
+    [
+    id(0x00000001)
+    ]
+    /**
+    Find a presence entry in the Presence Proxy Database (PPDB). 
+    
+    @param JabberID The "bare" jid of the entity to look for. (foo\@bar.com). If no presence packets are found, returns NULL.
+    
+    @param resource The specific resource to look for based on the bare jid.
+    @return Returns NULL if no matching presence entries were found. Returns the IExodusPresence interface object otherwise.
+    **/
+    HRESULT _stdcall Find([in] BSTR JabberID, [in] BSTR resource, [out, retval] IExodusPresence ** Presence /*Warning: unable to validate structure name: */ );
+    [
+    id(0x00000002)
+    ]
+    
+    /**
+    Find the next presence entry for the specified JID. Resource MUST be passed in to serve as the starting point for the next operation. Entries are sorted via priority.
+    
+    @param JabberID The "bare" jid of the entry to look for (foo\@bar.com).
+    @param resource The last resource you recieved.
+    @return The next presence entry after the resource specified according to the priority based sorting. 
+    **/
+    HRESULT _stdcall Next([in] BSTR JabberID, [in] BSTR resource, [out, retval] IExodusPresence ** Value /*Warning: unable to validate structure name: */ );
+    [
+    propget,
+    id(0x00000003)
+    ]
+    /**
+    Count the entries in the PPDB
+    @return The total number of unique bare jids in the current PPDB.
+    **/
+    HRESULT _stdcall Count([out, retval] long * Value );
+    [
+    propget,
+    id(0x00000004)
+    ]
+    /**
+    Find the last presence object received by the PPDB.
+    
+    @return The IExodusPresence object representing the last presence packet received.
+    **/
+    HRESULT _stdcall LastPresence([out, retval] IExodusPresence ** Value /*Warning: unable to validate structure name: */ );
+  };
+
+}; 

@@ -1,0 +1,137 @@
+<html>
+<head>
+<title>Exodus - Translations HOWTO</title>
+
+<style type="text/css">
+
+<!--
+    body {
+            background-color: #FFFFFF;
+            font-family: Arial, Helvetica;
+            font-size: 10pt;
+            margin-bottom: 5px;
+            margin-top: 5px;
+            margin-left: 5px;
+            margin-right: 5px;
+          }
+    div {margin-top: 10px;}
+    .title { font-size: 16pt; font-weight: bold }
+-->
+
+</style>
+
+</head>
+
+<body bgcolor="white">
+
+<center>
+<img src="exodus-logo.png" align="center">
+<hr>
+<table border="0">
+<tr>
+<td><a href="http://www.jabberstudio.org/projects/exodus/releases/">Downloads</a> | </td>
+<td><a href="shots.html">Screenshots</a> | </td>
+<td><a href="http://www.jabberstudio.org/projects/exodus/bugs/">Bugs</a> | </td>
+<td><a href="http://www.jabberstudio.org/projects/exodus/features/">Feature Requests</a> | </td>
+<td><a href="http://www.jabberstudio.org/cgi-bin/viewcvs.cgi/exodus">Subversion</a></td>
+</tr>
+</table>
+
+<hr />
+
+<span style="font-size: -2;">
+<a href="branding.html">Branding</a> |
+<a href="./plugin-docs/index.html">Plugin Documentation</a> |
+<a href="./translations.html">Translating Exodus </a>
+</span>
+
+</center>
+<hr>
+
+<!-- PAGE CONTENT -->
+<h1 align="center">Translating Exodus</h1>
+
+<h3>Current Translations</h3>
+<p>To view the currently supported languages, you view the various lang files
+via <a href="http://www.jabberstudio.org/cgi-bin/viewcvs.cgi/exodus/">
+ViewCVS here.</a>
+</p>
+
+
+<h3>Translation HOWTO</h3>
+<p>
+As of Exodus 0.8.5.0, Exodus supports language files use the
+<a href="http://www.gnu.org/software/gettext/gettext.html">GNU GetText</a>
+project. Currently, the number of language files that have been created
+is small. We NEED MORE HELP :).
+</p>
+
+<p>If you are willing to translate Exodus to your language, please subscribe
+to the <a href="http://mail.jabber.org/mailman/listinfo/exodus-dev">
+Exodus-Dev</a> mailing list. Please post to the Exodus-dev list at least and advertise
+your intentions to translate. Somebody may be doing it already.
+</p>
+
+<p>Once you have done that, you can continue with the following steps:
+
+<ol>
+ <li><a href="http://www.jabberstudio.org/cgi-bin/viewcvs.cgi/*checkout*/exodus/trunk/exodus/default.po">
+    Download the template file</a> from the Exodus subversion repository. You may want to check the
+    file out of Subversion yourself, if so take a look at the
+    <a href="http://www.jabberstudio.org/cgi-bin/viewcvs.cgi/*checkout*/exodus/trunk/exodus/README.txt">
+    README file for source code.</a></li>
+ <li>Get a PO file editor, like <a href="http://poedit.sourceforge.net">poEdit</a> (Win32),
+    <a href="http://i18n.kde.org/tools/kbabel/">KBabel</a> (*nix, KDE),
+    or a similar PO File editor. This step isn't all necessary as PO files are just text,
+    but it will help you a lot in managing the translation.</li>
+ <li>Translate to your language. PO file editors are more or less intuitive and the
+    task is not that complicated. Please try to make a good translation.
+    It is a good idea to have someone review it, as that person may find some
+    things that you have missed.</li>
+ <li>If you are not using an editor, you need to compile your default.po file
+    into default.mo. You can do this by using the tools from the dxGetText suite.
+    Go <a href="http://dybdahl.dk/dxgettext/download/">Download the latest Delphi toolkit</a>
+    (should be the first link) and install it. Inside the directory, you'll find the msgfmt.exe
+    console utility which can be used to compile PO files into binary MO files.
+    Exodus requires the langauage files to be binary MO files before it will use them.
+    <b>If you are using poEdit</b>, the editor will automatically compile PO files
+    into MO files, so you don't need any additional tools.
+ <li>Try it. (You will need at least Exodus 0.8.5.0 installed).
+    You can just drop the <b>default.mo</b>
+    file in the <b>locale/XX/LC_MESSAGES</b> directory. The local directory is
+    located inside the main directory where you installed Exodus.
+    Start Exodus, and goto Tools | Options | System, and select your language from the drop down list.</li>
+ <li>If everything is correct, submit the file to the Exodus-Dev mailing list or directly to
+    <a href="mailto:me@pgmillard.com">pgm</a> and he will put the file in CVS as soon as possible.</li>
+</ol>
+
+</p>
+
+<p>
+If you are willing to maintain the translated file for some period of time,
+please consider creating a <a href="http://jabberstudio.org">JabberStudio</a>
+account and ask for perms for checkin access for the translation files.
+</p>
+
+<!--  --------- FOOTER --- -->
+<div style="text-align: center; margin-top: 30px;">
+<a href="http://www.jabberpowered.org"><img src="jabber-powered-20.png" border="0"></a>
+</div>
+
+<hr>
+<table width="100%" border="0">
+<tr><td>
+<span style="font-size: 75%">
+Copyright &nbsp; Peter Millard, 2000 - 2004.<br />
+Jabber&trade; is a Trademark of <a href="http://www.jabber.com">Jabber, Inc.</a>
+</span>
+<td align="right">
+<span style="font-size: 75%; text-align: right">
+Comments, bad links, etc can be directed <a href="mailto:pgmillard@jabber.org">here</a>
+</span>
+</td></tr></table>
+
+</body>
+</html>
+
+

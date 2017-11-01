@@ -1,0 +1,126 @@
+<html>
+<head>
+<title>Exodus - Branding HOWTO</title>
+
+<style type="text/css">
+
+<!--
+    body {
+            background-color: #FFFFFF;
+            font-family: Arial, Helvetica;
+            font-size: 10pt;
+            margin-bottom: 5px;
+            margin-top: 5px;
+            margin-left: 5px;
+            margin-right: 5px;
+          }
+    div {margin-top: 10px;}
+    .title { font-size: 16pt; font-weight: bold }
+-->
+
+</style>
+
+</head>
+
+<body bgcolor="white">
+
+<center>
+<img src="exodus-logo.png" align="center">
+<hr>
+<table border="0">
+<tr>
+<td><a href="http://www.jabberstudio.org/projects/exodus/releases/">Downloads</a> | </td>
+<td><a href="shots.html">Screenshots</a> | </td>
+<td><a href="http://www.jabberstudio.org/projects/exodus/bugs/">Bugs</a> | </td>
+<td><a href="http://www.jabberstudio.org/projects/exodus/features/">Feature Requests</a> | </td>
+<td><a href="http://www.jabberstudio.org/cgi-bin/viewcvs.cgi/exodus">Subversion</a></td>
+</tr>
+</table>
+
+<hr />
+
+<span style="font-size: -2;">
+<a href="branding.html">Branding</a> |
+<a href="./plugin-docs/index.html">Plugin Documentation</a> |
+<a href="./translations.html">Translating Exodus </a>
+</span>
+
+</center>
+<hr>
+
+<!-- PAGE CONTENT -->
+<h1 align="center">Creating a Branded version of Exodus</h1>
+
+<ol>
+  <li>The easiest way to do these is to check out from <a href="http://www.jabberstudio.org/cvs.html">Subversion</a>.</li>
+  <li>Get or build a copy of these files:
+    <ul>
+      <!-- The binaries -->
+      <li>Exodus.exe</li>
+      <li>IdleHooks.dll</li>
+
+      <!-- icons, etc... -->
+      <li><a href="http://www.jabberstudio.org/cgi-bin/viewcvs.cgi/*checkout*/exodus/trunk/exodus/exodus.ico">exodus.ico</a></li>
+      <li><a href="http://www.jabberstudio.org/cgi-bin/viewcvs.cgi/*checkout*/exodus/trunk/exodus/exodus-installer.bmp">exodus-installer.bmp</a></li>
+      <li><a href="http://www.jabberstudio.org/cgi-bin/viewcvs.cgi/*checkout*/exodus/trunk/exodus/GPL-LICENSE.TXT">GPL-LICENSE.TXT</a></li>
+      <li><a href="http://www.jabberstudio.org/cgi-bin/viewcvs.cgi/*checkout*/exodus/trunk/redist/ZipDLL.dll">ZipDLL.dll</a></li>
+
+      <!-- NSIS installer scripts -->
+      <li><a href="http://www.jabberstudio.org/cgi-bin/viewcvs.cgi/*checkout*/exodus/trunk/exodus/exodus-new.nsi">exodus-new.nsi</a></li>
+      <li><a href="http://www.jabberstudio.org/cgi-bin/viewcvs.cgi/*checkout*/exodus/trunk/exodus/version.nsi">version.nsi</a></li>
+      <li><a href="http://www.jabberstudio.org/cgi-bin/viewcvs.cgi/*checkout*/exodus/trunk/exodus/plugins/example-plugin-i18n-new.nsi">example-plugin-i18n-new.nsi</a></li>
+
+      <!-- NSIS -->
+      <li><a href="http://sourceforge.net/project/showfiles.php?group_id=22049">NSIS 2</a></li>
+    </ul>
+  </li>
+  <li>These files you might want to host on your own web server:
+    <ul>
+      <li><a href="http://exodus.jabberstudio.org/indy_openssl096k.zip">indy_openssl096k.zip</a></li>
+      <li><a href="http://exodus.jabberstudio.org/richupd.exe">richupd.exe</a></li>
+      <li>branding.xml</li>
+    </ul>
+  </li>
+  <li>Create a branding.xml file.&nbsp; <a href="http://www.jabberstudio.org/cgi-bin/viewcvs.cgi/*checkout*/exodus/trunk/exodus/branding_defaults.xml">Here</a>
+    is a template, with the defaults.&nbsp; Any preference you set in this file
+    will become the default.&nbsp; You can set other preferences in here as
+    well, such as <a href="http://www.jabberstudio.org/cgi-bin/viewcvs.cgi/*checkout*/exodus/trunk/exodus/defaults.xml">these</a>,
+    or things that you find in your exodus.xml file.&nbsp; Good candidates are
+    fonts and colors.</li>
+  <li>Move ZipDll.dll to $NSIS_HOME\Plugins.</li>
+  <li>Read the <a href="http://nsis.sourceforge.net/Docs/">NSIS docs</a>, to
+    find out how to customize exodus.nsi.&nbsp; I'd suggest removing the &quot;Bleeding-edge updates&quot;
+    section, and adding branding.xml to the !Exodus section.  Search for the word <strong>BRANDING</strong> for hints.</li>
+
+  <li>If you want your branding.xml file to auto-update (seperately
+  from your setup.exe file), put your branding.xml file on a web
+  server, and set the <code>&lt;branding_url/&gt;</code> option in the
+  branding.xml that you distribute in your setup.exe.  When your uses
+  start up exodus, it will check to see if there is a later
+  branding.xml file at the specified URL.</li>
+
+  <li>Build your setup.exe file.&nbsp; I use: <code>&quot;c:\program files\nsis\makensis.exe&quot; /v2 exodus.nsi</code></li>
+  <li>Distribute your new setup.exe.</li>
+</ol>
+
+
+<!--  --------- FOOTER --- -->
+<div style="text-align: center; margin-top: 30px;">
+<a href="http://www.jabberpowered.org"><img src="jabber-powered-20.png" border="0"></a>
+</div>
+
+<hr>
+<table width="100%" border="0">
+<tr><td>
+<span style="font-size: 75%">
+Copyright &nbsp; Peter Millard, 2000 - 2004.<br />
+Jabber&trade; is a Trademark of <a href="http://www.jabber.com">Jabber, Inc.</a>
+</span>
+<td align="right">
+<span style="font-size: 75%; text-align: right">
+Comments, bad links, etc can be directed <a href="mailto:pgmillard@jabber.org">here</a>
+</span>
+</td></tr></table>
+
+</body>
+</html>

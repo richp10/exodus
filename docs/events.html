@@ -1,0 +1,529 @@
+<html>
+<head>
+<title>Exodus Events</title>
+<style>
+body { font-family: Tahoma, Arial, Helvetica; }
+</style>
+</head>
+<body>
+<h1>Event handling in Exodus</h1>
+<p>Subscribe to events using MainSession.RegisterCallback().  You'll
+need to register the correct kind of event handler for the event that
+you are catching.  There are several kinds of events available:</p>
+
+<ul>
+<li><b>Basic</b>: basic event that doesn't need extra information.
+Callback includes the event that was fired, and an XML element with
+more information.</li>
+<li><b>Packet</b>: protocol stanza received from the server.  These
+events can be filtered using a subset of 
+<a href="http://www.w3.org/TR/xpath">XPath</a>, known as "XPLite"
+(TODO: doc XPLite).
+Callback includes the event that was registered for, and an XML tag
+that includes the protocol.  The event parameter in the callback will
+usually be 'xml', but may be 'timeout', if, for example, there has
+been an IQ timeout.</li>
+<li><b>Roster</b>: roster-related events, fired by the business logic 
+after the model changes.  Callback includes a roster
+item, which can be nil for certain events.</li>
+<li><b>Presence</b>: presence-related events, fired by the business
+logic after the model changes.  Callback includes a presence object
+associated with the event.</li>
+<li><b>String</b>: miscellaneous events.  Callback includes a string.</li>
+</ul>
+
+<p>You can register for events by specifying a selector as a string.
+Example: '/session/connected'. The first section of the event selector
+(up to the optional second '/' character), must be from the following
+list:</p>
+
+<table border="1"  id="event_cat_table" style="border-collapse: collapse">
+   <tr>
+       	<th width="265" valign="top">Event category</th>
+	<th valign="top">Type</th>
+	<th valign="top">Meaning</th>
+   </tr>
+   <tr>
+      <td>/filter</td>
+      <td>Packet</td>
+      <td>Plugins that want to catch protocol before it hits the core
+	should register here.  If nothing catches an event in /filter,
+	/pre is checked.</td>
+   </tr>
+   <tr>
+      <td>/pre</td>
+      <td>Packet</td>
+      <td>Things in the core that want to prevent "normal" processing
+	should go here.  Examples include x:data in a message,
+	invites, OOBs, etc.  If nothing catches an event in /pre,
+	/packet is checked.</td>
+   </tr>
+   <tr>
+      <td>/packet</td>
+      <td>Packet</td>
+      <td>Core processing of protocol.  If nothing catches an event in
+	/packet, /post is checked.</td>
+   </tr>
+   <tr>
+      <td>/post</td>
+      <td>Packet</td>
+      <td>Stanzas that weren't handled by anything else.  Plugins that
+	want to defer to things in the core might register here.  If
+	nothing catches an event in /post, /unhandled is checked.</td>
+   </tr>
+   <tr>
+      <td>/unhandled</td>
+      <td>Packet</td>
+      <td>Stanzas that weren't handled anywhere else.  This is where
+	IQ/501's get returned, for example.</td>
+   </tr>
+   <tr>
+      <td>/windows</td>
+      <td>Packet</td>
+      <td>Deprecated.  Used to catch windows events.  WARNING: could
+	cause performance issues.</td>
+   </tr>
+   <tr>
+      <td>/session</td>
+      <td>Basic</td>
+      <td>Session business logic events.</td>
+   </tr>
+   <tr>
+      <td>/roster</td>
+      <td>Roster</td>
+      <td>Roster business logic events.</td>
+   </tr>
+   <tr>
+      <td>/presence</td>
+      <td>Presence</td>
+      <td>Presence business logic events.</td>
+   </tr>
+   <tr>
+      <td>/data</td>
+      <td>String</td>
+      <td>Debug events.</td>
+   </tr>
+</table>
+
+<p>From the second slash on, the event selector can be used to narrow
+down which events call the callback.  For packet events, this
+portion of the selector can be an XPLite.  For other event types, this
+is just a string, which is compared against the name of the actual
+event fired, to see if the event starts with the same characters as
+the selector.  As an example, if you register for '/session', you'll
+receive all session events.  If you register for
+'/session/error', you'll receive '/session/error/auth' and
+'/session/error/reg'.</p>
+
+<p>Fire events using MainSession.fireEvent().  Make sure to use the
+correct version of fireEvent() for the event that you are firing.</p>
+
+<table border="1" width="100%" id="table1" style="border-collapse: collapse">
+	<tr>
+		<th width="265" valign="top">Event</th>
+		<th valign="top">XML</th>
+		<th valign="top">Extra Info</th>
+		<th valign="top">Meaning</th>
+	</tr>
+	
+	<tr>
+		<td valign="top" width="265">/data/debug</td>
+		<td valign="top">nil</td>
+		<td valign="top">String</td>
+		<td valign="top">Info to be shown in the debug window</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/data/send</td>
+		<td valign="top">nil</td>
+		<td valign="top">String</td>
+		<td valign="top">Data was sent</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/data/recv</td>
+		<td valign="top">nil</td>
+		<td valign="top">String</td>
+		<td valign="top">Data was received</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/presence/available</td>
+		<td valign="top">&lt;presence .../&gt;</td>
+		<td valign="top">TJabberPres</td>
+		<td valign="top">The user has changed presence, and is
+		still available.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/presence/error</td>
+		<td valign="top">&lt;presence .../&gt;</td>
+		<td valign="top">TJabberPres</td>
+		<td valign="top">We've received a presence error.
+		Typically this is a 5xx from S2S being down.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/presence/online</td>
+		<td valign="top">&lt;presence .../&gt;</td>
+		<td valign="top">TJabberPres</td>
+		<td valign="top">The user is newly online (we've
+		received the first presence stanza from them).</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/presence/offline</td>
+		<td valign="top">&lt;presence .../&gt;</td>
+		<td valign="top">TJabberPres</td>
+		<td valign="top">The last online resource for a
+		user has gone offline.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/presence/subscription</td>
+		<td valign="top">&lt;presence .../&gt;</td>
+		<td valign="top">TJabberPres</td>
+		<td valign="top">We've received a subscription
+		request.  No processing of the subscription has taken
+		place yet.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/presence/unavailable</td>
+		<td valign="top">&lt;presence .../&gt;</td>
+		<td valign="top">TJabberPres</td>
+		<td valign="top">One resource for this user has gone
+		offline.  The user still has at least one more
+		resource online, however.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/roster/end</td>
+		<td valign="top">nil</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">Finished retrieving roster for the first time.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/roster/context_menu</td>
+		<td valign="top">&lt;context_menu menu_id="Roster"/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">The roster is showing a context menu.  The menu_id is the menu name (custom or predefined).</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/roster/item</td>
+		<td valign="top">&lt;item xmlns='jabber:iq:roster' name='' jid=''&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">Render this roster item</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/roster/item</td>
+		<td valign="top">&lt;conference xmlns='storage:bookmarks' jid='' name='' autojoin='true|false'&gt;&lt;nick&gt;nick&lt;/nick&lt;/conference&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">Bookmark was created or updated.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/roster/group</td>
+		<td valign="top">&lt;group name=''/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">Render this roster group.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/roster/collapse</td>
+		<td valign="top">&lt;collapse name=''/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">This group is now collapsed</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/roster/expand</td>
+		<td valign="top">&lt;expand name=''/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">This group is now expanded</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/roster/start</td>
+		<td valign="top">nil |
+		&lt;iq&gt;&lt;query xmlns='jabber:iq:roster'/&gt;&lt;/iq&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">Roster update is starting.&nbsp; Fires once before 
+		processing roster the first time.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/roster/remove</td>
+		<td valign="top">&lt;item xmlns='jabber:iq:roster' name='' jid=''&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">Roster item (or bookmark) is being removed.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/avatars</td>
+		<td valign="top">&lt;avatar jid='user@host'/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">New avatar available</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/before_presence</td>
+		<td valign="top">&lt;presence/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">We're about to set our own presence.&nbsp; This is for 
+		plugins only.&nbsp; If they want to modify the presence before being 
+		sent, they should call registerPresenceXML().</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/block</td>
+		<td valign="top">&lt;block jid=''/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">A jid has been blocked.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/caps</td>
+		<td valign="top">&lt;caps from='' capid=''/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">We have client caps for a specific cap ID from this jid.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/close-rooms</td>
+		<td valign="top">&lt;partall&gt;message&lt;/partall&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">User typed '/partall message' in a chat room</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/close-all-windows</td>
+		<td valign="top">nil</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">User selected 'close all' from menu.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/connecting</td>
+		<td valign="top">nil</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">Starting the connect process</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/disconnected</td>
+		<td valign="top">nil</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">Session was disconnected</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/dns</td>
+		<td valign="top">&lt;dns type='srv|a|failed' ip='' port=''/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">DNS resolution.&nbsp; You say you want a resolution?&nbsp; 
+		Well, you know...</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/entity/info</td>
+		<td valign="top">&lt;entity from='' [type='error']/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">New disco/browse info available.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/entity/items</td>
+		<td valign="top">&lt;entity from='' [type='error']/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">New disco/browse child items available.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/error/auth</td>
+		<td valign="top">nil | &lt;iq type='error'/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">Authentication error</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/error/compression</td>
+		<td valign="top">nil</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">Error decompressing the stream (see
+		<a href="http://www.jabber.org/jeps/jep-0138.html">JEP-0138</a>).</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/error/noaccount</td>
+		<td valign="top">&lt;iq type='error'/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">401 error, no account found</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/error/prefs-write</td>
+		<td valign="top">nil</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">Couldn't write the prefs file.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/error/presence</td>
+		<td valign="top">&lt;presence type='error'/&gt;</td>
+		<td valign="top">&nbsp;</td>
+
+		<td valign="top">Received a presence error.&nbsp;
+		Usually a 500 or 504 when S2S is down.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/error/reg</td>
+		<td valign="top">nil</td>
+		<td valign="top">&nbsp;</td>
+
+		<td valign="top">Registration error.&nbsp; Either
+		registration failed, or user cancelled registration
+		when they found out the server didn't advertise
+		support for it.</td>
+
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/error/ssl</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">&nbsp;</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/error/stream</td>
+		<td valign="top">&lt;stream:error/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">Stream error received.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/error/tls</td>
+		<td valign="top">nil</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">TLS error.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/log_message</td>
+		<td valign="top">&lt;log_message to='user1@domain.com/work' from='user2@domain.com/home'&gt;&lt;time&gt;07/04/2006 12:00:00&lt;/time&gt;&lt;body&gt;Happy 4th of July!&lt;/body&gt;&lt;/log_message&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">Sent only by plugins to trigger the message logging plugins to log the supplied message.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/logger</td>
+		<td valign="top">&lt;off/&gt; or &lt;on date_enabled='true|false'/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">Logging has been enabled or disabled.</td>
+	</tr>
+	
+	<tr>
+		<td valign="top" width="265">/session/plugin/plugin_name</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">Prefered event ID for plugins to send events to other plugins.  The plugin_name is defined by the specific plugin receiving the message.  XML is also plugin defined.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/prefs</td>
+		<td valign="top">nil</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">Preferences have changed</td>
+	</tr>
+	
+	<tr>
+		<td valign="top" width="265">/session/register</td>
+		<td valign="top">&lt;register jid=''/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">We got back an error 407 &quot;registration required&quot;, and 
+		the user said &quot;ok, let's register&quot;</td>
+	</tr>
+
+	<tr>
+		<td valign="top" width="265">/session/transport</td>
+		<td valign="top">&lt;transport jid='' name=''/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">We registered with a transport</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/gui/autoupdate</td>
+		<td valign="top">&lt;update url=''/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">A new auto-update is available</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/gui/chat</td>
+		<td valign="top">&lt;message/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">First chat from a person.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/gui/conference</td>
+		<td valign="top">&lt;conference xmlns='storage:bookmarks' jid='' name='' autojoin='true|false'&gt;&lt;nick&gt;nick&lt;/nick&lt;/conference&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">Join this chat room.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/gui/conference-props</td>
+		<td valign="top">&lt;conference xmlns='storage:bookmarks' jid='' name='' autojoin='true|false'&gt;&lt;nick&gt;nick&lt;/nick&lt;/conference&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">Show bookmark properties for this bookmark.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/gui/headline</td>
+		<td valign="top">&lt;message/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">Headline message should be displayed.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/gui/msgevent</td>
+		<td valign="top">&lt;message/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">Message to be shown in the queue?</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/gui/no-inband-reg</td>
+		<td valign="top">nil</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">This server does not advertise support for 
+		registration.&nbsp; This doesn't mean that it doesn't support it.&nbsp; 
+		This is a case where absence of evidence is not evidence of absence.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/gui/reg-not-supported</td>
+		<td valign="top">nil</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">In effect, we're using SASL auth, and trying to 
+		register a new account. </td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/gui/subscribe</td>
+		<td valign="top">&lt;presence/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">A subscription request was received which requires the 
+		user to approve.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/gui/update-chat</td>
+		<td valign="top">&lt;message/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">Subsequent chat from a person.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/presence</td>
+		<td valign="top">nil (<font color="#800000">should this include the new 
+		presence tag, as broadcast?</font>)</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">Our presence has been changed.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/regok</td>
+		<td valign="top">&lt;iq type='result'/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">Registration was ok, but our authentication mechanism 
+		didn't want to automatically authenticate.&nbsp; Don't know if this 
+		fires in practice.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/server_prefs</td>
+		<td valign="top">&lt;storage xmlns='storage:imprefs'/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">Retrieved server-side preferences.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/session/unblock</td>
+		<td valign="top">&lt;unblock jid=''/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">A jid has been unblocked.</td>
+	</tr>
+	<tr>
+		<td valign="top" width="265">/windows/msg</td>
+		<td valign="top">&lt;event msg='' hwnd='' lparam='' wparam=''/&gt;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">A plugin added a windows message to track, and it has 
+		arrived.</td>
+	</tr>
+<!--
+	<tr>
+		<td valign="top" width="265">&nbsp;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">&nbsp;</td>
+		<td valign="top">&nbsp;</td>
+	</tr>
+-->
+	
+</table>
+<p>
+
+</body>
+</html>

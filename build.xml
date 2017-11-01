@@ -1,0 +1,331 @@
+<?xml version="1.0"?>
+<!--
+    Copyright 2006, Joe Hildebrand
+
+    This file is part of Exodus.
+
+    Exodus is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    Exodus is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Exodus; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+-->
+
+<project name="exodus" basedir="." default="setup">
+  <!-- once you set a prop, it stays set -->
+  <property file='user.properties'/>
+
+  <property name="delphi" value="C:/Program Files/Borland/BDS/4.0"/>
+  <property name="TNT" value="C:\source\exodus\exodus\components\tntunicode"/>
+  <property name="JCL" value="C:\source\exodus\exodus\components\jcl\source"/>
+  <property name="DX" value="C:\Program Files\dxgettext"/>
+  <property name="NSIS" value="c:\program files\NSIS\makensis.exe"/>
+  <property name="runner" value="c:\program files\exodus"/>
+
+  <property name="opts.delphi" 
+	    value='-DINDY9 -LUvcl -LUrtl -B -Q -U"${delphi}\Lib" -U"${delphi}\Lib\Indy9" -GD -N.\output'/>
+  <property name="opts.jcl" 
+	    value='-I"${JCL}" -U"${JCL}" -U"${JCL}\common" -U"${JCL}\vcl" -U"${JCL}\windows"'/>
+
+  <property name="dcc" value="${delphi}/bin/dcc32.exe"/>
+  <property name="rcc" value="${delphi}/bin/brcc32.exe"/>
+  <property name="dxgettext" value="${DX}/dxgettext.exe"/>
+  <property name="msgfmt" value="${DX}/msgfmt.exe"/>
+  <property name="release_type" value="daily"/>
+  <property name="version_type" value="build"/>
+
+  <property name="svn" value="svn"/>
+  <property name="svn.user" value="reset in user.properies"/>
+  <property name="svn.prefix" value="svn+ssh"/>
+  <property name="svn.server" value="svn.jabberstudio.org"/>
+  <property name="svn.root" value="/var/projects/exodus/svn"/>
+  <property name="svn.userhost" value="${svn.user}@${svn.server}"/>
+  <property name="svn.path" value="${svn.prefix}://${svn.userhost}${svn.root}"/>
+
+  <property name="ssh" value="ssh"/>
+  <property name="scp" value="scp"/>
+  <property name="www.root" value="/var/projects/exodus"/>
+  <property name="www.stage" value="${www.root}/www/daily/stage"/>
+  <property name="ssh.stage" value="${svn.userhost}:${www.stage}"/>
+  <property name="genlog" value= "/var/projects/exodus/bin/genlog"/>
+
+  <condition property="has_TNT">
+    <or>
+      <available file="${TNT}/TntControls.dcu"/>
+      <available file="${TNT}/TntControls.pas"/>
+    </or>
+  </condition>
+
+
+  <target name="check">
+    <available property="has_dcc"  file="${dcc}"/>
+    <available property="has_JCL"  file="${JCL}/windows/JclDebug.pas"/>
+    <available property="has_DX"   file="${dxgettext}"/>
+    <available property="has_NSIS" file="${NSIS}"/>
+    <available property="has_rcc" file="${rcc}"/>
+      
+    <fail unless="has_dcc">
+Can't find dcc32 binary, looked in ${dcc}.
+    </fail>
+    <fail unless="has_rcc">
+Can't find brcc32, looked in ${rcc}.
+    </fail>
+    <fail unless="has_TNT">
+Can't find the TNT library, looked in ${TNT}.
+You can find TNT at: http://www.tntware.com/delphicontrols/unicode/
+    </fail>
+    <fail unless="has_JCL">
+Can't find the JCL library, looked in ${JCL}.
+You can find JCL at: http://homepages.borland.com/jedi/jcl/
+    </fail>
+    <fail unless="has_DX">
+Can't find dxgettext, looked in ${DX}.
+You can download dxgettext from: http://dybdahl.dk/dxgettext/
+    </fail>
+    <fail unless="has_NSIS">
+Can't find the NSIS make system, looked in ${NSIS}.  
+You can download NSIS from: http://sourceforge.net/projects/nsis
+    </fail>
+    <echo>All prerequisites found.</echo>
+  </target>
+
+  <target name="clean">
+    <delete>
+      <fileset dir="exodus">
+	<include name="setup.exe"/>
+	<include name="Exodus.exe"/>
+	<include name="Exodus.zip"/>
+	<include name="*_emoticons.dll"/>
+	<include name="IdleHooks.dll"/>
+	<include name="locale.zip"/>
+	<include name="*.dcu"/>
+      </fileset>
+      <fileset dir="jopl" includes="*.dcu"/>
+      <fileset dir="exodus/output" includes="*.dcu"/>
+      <fileset dir="exodus/locale" includes="**/default.mo"/>
+      <fileset dir="exodus/plugins">
+	<include name="*.zip"/>
+	<include name="*.dll"/>
+	<include name="*/output/*"/>
+      </fileset>
+    </delete> 
+  </target>
+
+  <target name="idlehooks" depends="check, clean">
+    <exec dir="exodus" executable="${dcc}" failonerror="true">
+      <arg line="${opts.delphi}"/>
+      <arg value="IdleHooks.dpr"/>
+    </exec>
+  </target>
+
+  <target name="resources" depends="check">
+    <exec dir="exodus" executable="${rcc}" failonerror="true">
+      <arg value="version.rc"/>
+    </exec>
+    <exec dir="exodus" executable="${rcc}" failonerror="true">
+      <arg value="xml.rc"/>
+    </exec>
+    <exec dir="exodus" executable="${rcc}" failonerror="true">
+      <arg value="iehtml.rc"/>
+    </exec>
+  </target>
+
+  <target name="exodus" depends="resources">
+    <exec dir="exodus" executable="${dcc}" failonerror="true">
+      <arg line='${opts.delphi}'/> 
+      <arg line='${opts.jcl}'/>
+      <arg value="-DExodus"/>
+      <arg value="-DTRACE_EXCEPTIONS"/>
+      <arg value='-U"Components"'/>
+      <arg value='-U"${TNT}"'/>
+      <arg value="Exodus.dpr"/>
+    </exec>
+  </target>
+
+  <target name="gettext" depends="check">
+    <apply dir="exodus" 
+	   executable="${dxgettext}" 
+	   parallel="true" 
+	   verbose="true"
+	   failonerror="true">
+      <fileset dir="exodus">
+	<include name="*.pas"/>
+	<include name="*.inc"/>
+	<include name="*.dpr"/>
+	<include name="*.xfm"/>
+	<include name="*.dfm"/>
+      </fileset>
+      <fileset dir="jopl">
+	<include name="*.pas"/>
+	<include name="*.inc"/>
+	<include name="*.dpr"/>
+	<include name="*.xfm"/>
+	<include name="*.dfm"/>
+      </fileset>
+      <fileset dir="exodus/prefs">
+	<include name="*.pas"/>
+	<include name="*.inc"/>
+	<include name="*.dpr"/>
+	<include name="*.xfm"/>
+	<include name="*.dfm"/>
+      </fileset>
+    </apply>
+    <apply dir="exodus" 
+	   executable="${msgfmt}" 
+	   dest="exodus/locale" 
+	   verbose="true"
+	   failonerror="true">
+      <fileset dir="exodus/locale">
+	<include name="**/default.po"/>
+      </fileset>
+      <srcfile/>
+      <arg value="-o"/>
+      <targetfile/>
+      <mapper type="glob" from="*.po" to="*.mo"/>
+    </apply>
+    <zip destfile="exodus/locale.zip" basedir="exodus" 
+	 includes="locale/**/*.mo"/>
+  </target>
+
+  <target name="msn" depends="check">
+    <exec dir="exodus/msn-emoticons" executable="${dcc}" failonerror="true">
+      <arg line='${opts.delphi}'/>
+      <arg value="-Noutput"/>
+      <arg value="msn_emoticons.dpr"/>
+    </exec>    
+  </target>
+
+  <target name="yahoo" depends="check">
+    <exec dir="exodus/yahoo-emoticons" executable="${dcc}" failonerror="true">
+      <arg line='${opts.delphi}'/>
+      <arg value="-Noutput"/>
+      <arg value="yahoo_emoticons.dpr"/>
+    </exec>    
+  </target>
+
+  <target name="plugins" depends="check">
+    <delete>
+      <fileset dir="exodus/plugins">
+	<include name="plugin-sections-new.nsi"/>
+	<include name="plugin-desc-new.nsi"/>
+	<include name="plugin-i18n-new.nsh"/>
+      </fileset>
+    </delete>
+    <subant verbose="true" genericantfile="plugin.xml">
+      <property name="opts.delphi" value="${opts.delphi}"/>
+      <property name="dcc" value="${dcc}"/>
+      <property name="TNT" value="${TNT}"/>
+      <property name="exodus" value="${basedir}"/>
+      <property name="exodus.includes" 
+		value="-U${basedir}/exodus/output -U${basedir}/jopl"/>
+      <dirset dir="exodus/plugins" includes="*"/>
+    </subant>
+  </target>
+
+  <target name='installer' 
+	  depends='idlehooks, exodus, gettext, msn, yahoo, plugins'>
+    <zip basedir="exodus" 
+	 destfile="exodus/Exodus.zip" 
+	 includesfile="exodus/zipfiles.txt">
+      <fileset dir="exodus/plugins" includes="*.dll"/>
+      <fileset dir="redist">
+        <include name="sqlite3.dll"/>
+        <include name="icuin38.dll"/>
+        <include name="icuuc38.dll"/>
+      </fileset>
+    </zip>
+    <exec dir="exodus" executable="${NSIS}" failonerror="true">
+      <arg value="/v1"/>
+      <arg value="/DDAILY"/>
+      <arg value="exodus-new.nsi"/>
+    </exec>
+  </target>
+
+  <target name="deploy" depends="exodus, plugins">
+    <exec executable="python">
+      <arg value="shutdown.py"/>
+    </exec>
+    <copy todir="${runner}">
+      <fileset dir="exodus">
+	<include name="Exodus.exe"/>
+	<include name="Exodus.map"/>
+      </fileset>
+    </copy>    
+    <copy todir="${runner}/plugins">
+      <fileset dir="exodus/plugins">
+	<include name="*.dll"/>
+      </fileset>
+    </copy>
+    <exec executable="python">
+      <arg value="restart.py"/>
+    </exec>
+  </target>
+
+  <target name="version">
+    <!-- move this into ant, out of perl -->
+    <exec dir="exodus" executable="perl" failonerror="true">
+      <arg value="version.pl"/>
+      <arg value="${version_type}"/>
+    </exec>    
+  </target>
+
+  <target name="stage">
+    <!-- TODO: deal with non-daily builds 
+    <exec dir="exodus" executable="${scp}" failonerror="true">
+      <arg value="setup.exe"/>
+      <arg value="Exodus.zip"/>
+      <arg value="plugins/*.zip"/>
+      <arg value="${ssh.stage}"/>
+    </exec> -->
+
+    <exec dir="exodus" executable="${ssh}" failonerror="true">
+      <arg value="${svn.userhost}"/>
+      <arg value='"cd ${www.stage}; chmod 664 *; mv setup.exe ..; mv Exodus.zip ..; mv *.zip ../plugins\; ${genlog} ${release_type}"'/>
+    </exec>
+  </target>
+
+  <target name="release" depends="clean, version, installer">
+    <echo>${release_type} build (version ${version_type})...</echo>
+    <script language="beanshell">
+      project.setProperty("release_type_uc", project.getProperty("release_type").toUpperCase());
+    </script>
+    <exec executable="${svn}" failonerror="true">
+      <arg value="ci"/>
+      <arg value="-m"/>
+      <arg value="${release_type} build"/>
+      <arg value="exodus/version.h"/>
+      <arg value="exodus/version.nsi"/>
+      <arg value="exodus/default.po"/>
+    </exec>
+    <exec executable="${svn}" failonerror="true">
+      <arg value="del"/>
+      <arg value="${svn.path}/tags/${release_type_uc}"/>
+      <arg value="-m"/>
+      <arg value="new ${release_type} build"/>
+    </exec>
+    <exec executable="${svn}" failonerror="true">
+      <arg value="update"/>
+    </exec>
+    <exec executable="${svn}" failonerror="true">
+      <arg value="cp"/>
+      <arg value="."/>
+      <arg value="${svn.path}/tags/${release_type_uc}"/>
+      <arg value="-m"/>
+      <arg value="new ${release_type} bvuild"/>
+    </exec>
+    <exec executable="${svn}" failonerror="true">
+      <arg value="update"/>
+    </exec>
+  </target>
+
+  <target name="setup" depends="clean, installer">
+  </target>
+</project>

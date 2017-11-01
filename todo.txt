@@ -1,0 +1,17 @@
+TODO List
+===============
+
+XP SP2 Stuff
+- Checkout using the INetFwV4AuthorizedApplication API to add Exodus to the
+     AuthorizedApplications list.
+
+
+Nested Groups nits
+- Right-click/New group should add a subgroup of the current
+- Drag'n'drop groups into other groups
+- Rename parent group
+- Mixed groups (contacts and groups as children)
+- Counters in parent groups
+- Groups as children of Offline, with "opposite" counters (parent offline
+    group can use total number of contacts as the /total)
+

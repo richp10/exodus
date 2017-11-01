@@ -1,0 +1,104 @@
+inherited frmDockable: TfrmDockable
+  Caption = 'frmDockable'
+  ClientWidth = 204
+  DragKind = dkDock
+  DragMode = dmAutomatic
+  KeyPreview = True
+  OnClose = FormClose
+  OnDragDrop = OnDockedDragDrop
+  OnDragOver = OnDockedDragOver
+  OnKeyDown = FormKeyDown
+  ExplicitWidth = 212
+  ExplicitHeight = 191
+  PixelsPerInch = 96
+  TextHeight = 13
+  object pnlDock: TTntPanel
+    Left = 0
+    Top = 0
+    Width = 204
+    Height = 33
+    Align = alTop
+    BevelOuter = bvNone
+    ParentColor = True
+    TabOrder = 0
+    object pnlDockTopContainer: TTntPanel
+      Left = 0
+      Top = 0
+      Width = 204
+      Height = 28
+      Align = alTop
+      BevelOuter = bvNone
+      ParentColor = True
+      TabOrder = 0
+      object tbDockBar: TToolBar
+        AlignWithMargins = True
+        Left = 155
+        Top = 3
+        Width = 46
+        Height = 22
+        Align = alRight
+        AutoSize = True
+        EdgeInner = esNone
+        EdgeOuter = esNone
+        HideClippedButtons = True
+        Images = frmExodus.ImageList1
+        TabOrder = 0
+        Transparent = True
+        Wrapable = False
+        object btnDockToggle: TToolButton
+          AlignWithMargins = True
+          Left = 0
+          Top = 0
+          Margins.Left = 0
+          Margins.Top = 0
+          Margins.Right = 0
+          Margins.Bottom = 0
+          AutoSize = True
+          Caption = 'btnDockToggle'
+          ImageIndex = 82
+          OnClick = btnDockToggleClick
+        end
+        object btnCloseDock: TToolButton
+          AlignWithMargins = True
+          Left = 23
+          Top = 0
+          Hint = 'Close this tab'
+          Margins.Left = 0
+          Margins.Top = 0
+          Margins.Right = 0
+          Margins.Bottom = 0
+          AutoSize = True
+          Caption = 'btnCloseDock'
+          ImageIndex = 83
+          OnClick = btnCloseDockClick
+        end
+      end
+      object pnlDockTop: TTntPanel
+        Left = 0
+        Top = 0
+        Width = 152
+        Height = 28
+        Align = alClient
+        BevelOuter = bvNone
+        ParentColor = True
+        TabOrder = 1
+      end
+    end
+    object pnlDockControlSite: TTntPanel
+      AlignWithMargins = True
+      Left = 4
+      Top = 31
+      Width = 196
+      Height = 2
+      Margins.Left = 4
+      Margins.Right = 4
+      Margins.Bottom = 0
+      Align = alClient
+      BevelOuter = bvNone
+      ParentColor = True
+      TabOrder = 1
+      ExplicitTop = 28
+      ExplicitHeight = 5
+    end
+  end
+end

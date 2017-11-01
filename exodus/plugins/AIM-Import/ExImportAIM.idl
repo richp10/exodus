@@ -1,0 +1,25 @@
+[
+  uuid(76296895-2056-42BC-8886-4DBFD8D4C1DB), 
+  version(1.0), 
+  helpstring("ExImportAIM Library"), 
+  custom(DE77BA64-517C-11D1-A2DA-0000F8773CE9, 100663657), 
+  custom(DE77BA63-517C-11D1-A2DA-0000F8773CE9, 1149202214), 
+  custom(DE77BA65-517C-11D1-A2DA-0000F8773CE9, "Created by MIDL version 6.00.0361 at Thu Jun 01 18:50:13 2006\n")
+    
+]
+library ExImportAIM
+{
+
+  importlib("Exodus.exe");
+  importlib("stdole2.tlb");
+
+  [
+    uuid(811F504E-B9AA-42E5-A2A4-E49DB64D866A), 
+    version(1.0)
+  ]
+  coclass AIMPlugin
+  {
+    [default] interface IExodusPlugin;
+  };
+
+};

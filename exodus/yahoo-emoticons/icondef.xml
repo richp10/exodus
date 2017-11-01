@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<icondef>
+  <meta>
+    <name>exodus-yahoo</name>
+    <version>1.0.0</version>
+    <description>Icons shipped with Exodus, in Yahoo style</description>
+    <author jid="hildjj@jabber.org">Joe Hildebrand</author>
+    <author jid="pgmillard@jabber.org">Peter Millard</author>
+    <creation>2004-04-10</creation>
+    <home>http://exodus.jabberstudio.org/</home>
+  </meta>
+  <icon>
+    <text>O:)</text>
+    <text>O:-)</text>
+    <text>o:)</text>
+    <text>o:-)</text>
+    <object mime="image/gif">yahoo_angel.gif</object>
+  </icon>
+  <icon>
+    <text>:B</text>
+    <text>:-B</text>
+    <object mime="image/gif">yahoo_cool.gif</object>
+  </icon>
+  <icon>
+    <text>:cow</text>
+    <object mime="image/gif">yahoo_cow.gif</object>
+  </icon>
+  <icon>
+    <text>&gt;:</text>
+    <text>:devil</text>
+    <object mime="image/gif">yahoo_devil.gif</object>
+  </icon>
+  <icon>
+    <text>:"&gt;</text>
+    <object mime="image/gif">yahoo_embarassed.gif</object>
+  </icon>
+  <icon>
+    <text>:skull</text>
+    <object mime="image/gif">yahoo_gray.gif</object>
+  </icon>
+  <icon>
+    <text>:x</text>
+    <text>:-x</text>
+    <text>:X</text>
+    <text>:-X</text>
+    <object mime="image/gif">yahoo_love.gif</object>
+  </icon>
+  <icon>
+    <text>:-/</text>
+    <text>:-\</text>
+    <object mime="image/gif">yahoo_question.gif</object>
+  </icon>
+  <icon>
+    <text>:sleep</text>
+    <object mime="image/gif">yahoo_sleep.gif</object>
+  </icon>
+  <icon>
+    <text>=;</text>
+    <object mime="image/gif">yahoo_stop.gif</object>
+  </icon>
+  <icon>
+    <text>:'(</text>
+    <text>:cry</text>
+    <object mime="image/gif">yahoo_tantrum.gif</object>
+  </icon>
+</icondef>

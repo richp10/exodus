@@ -1,0 +1,25 @@
+[
+  uuid(ABFF5177-A3CD-44C7-9005-24BD069C1F5D), 
+  version(1.0), 
+  helpstring("ExImportICQ Library"), 
+  custom(DE77BA64-517C-11D1-A2DA-0000F8773CE9, 100663657), 
+  custom(DE77BA63-517C-11D1-A2DA-0000F8773CE9, 1149185414), 
+  custom(DE77BA65-517C-11D1-A2DA-0000F8773CE9, "Created by MIDL version 6.00.0361 at Thu Jun 01 14:10:14 2006\n")
+    
+]
+library ExImportICQ
+{
+
+  importlib("Exodus.exe");
+  importlib("stdole2.tlb");
+
+  [
+    uuid(AF223E4A-369F-4EF3-BC15-A6A26409AA56), 
+    version(1.0)
+  ]
+  coclass ICQImportPlugin
+  {
+    [default] interface IExodusPlugin;
+  };
+
+};

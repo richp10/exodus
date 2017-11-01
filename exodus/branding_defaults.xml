@@ -1,0 +1,90 @@
+<!-- This file contains the defaults that are hard-coded into Exodus.
+To make a branding file, copy this file to branding.xml, delete the
+entries you want to stay as the default, and change the rest. 
+
+If you want to know what these do, UTSL.  You're lucky you're getting 
+this much help.
+-->
+<brand>
+  <!-- Servers to list in the login window -->
+  <brand_profile_server_list>
+    <s>jabber.org</s>
+    <s>jabber.com</s>
+  </brand_profile_server_list>
+  <!-- Resources to list in the login window -->
+  <brand_profile_resource_list>
+    <s>Home</s>
+    <s>Work</s>
+    <s>Exodus</s>
+  </brand_profile_resource_list>
+    
+  <!-- Default username -->
+  <brand_profile_username></brand_profile_username>
+  <!-- Default password -->
+  <brand_profile_password></brand_profile_password>
+  <!-- Default server -->
+  <brand_profile_server>jabber.org</brand_profile_server>
+  <!-- Default resource -->
+  <brand_profile_resource>Exodus</brand_profile_resource>
+  <!-- Default priority -->
+  <brand_profile_priority>1</brand_profile_priority>
+  <!-- Save this password for next time? -->
+  <brand_profile_save_password></brand_profile_save_password>
+  <!-- Connection type: 0 for normal, 1 for http -->
+  <brand_profile_conn_type>0</brand_profile_conn_type>
+
+  <!-- IP addr or network name of the jabber server, if on a machine
+       that can't be reached by the JSM host tag -->
+  <brand_profile_host></brand_profile_host>
+  <!-- The port to connect on -->
+  <brand_profile_port>5222</brand_profile_port>
+  <!-- SSL enabled?  (Requires the ssl dll's) -->
+  <brand_profile_ssl>false</brand_profile_ssl>
+  <!--  -->
+  <brand_profile_socks_type>0</brand_profile_socks_type>
+  <!-- None=0, 4=1, 4a=2, 5=3 -->
+  <brand_profile_socks_host></brand_profile_socks_host>
+  <!-- port to connect to socks server -->
+  <brand_profile_socks_port>1080</brand_profile_socks_port>
+  <!-- socks server requires authentication? -->
+  <brand_profile_socks_auth>false</brand_profile_socks_auth>
+  <!-- user name for socks server -->
+  <brand_profile_socks_user></brand_profile_socks_user>
+  <!-- password for socks server -->
+  <brand_profile_socks_password></brand_profile_socks_password>
+
+  <!-- URL for JEP-0025 HTTP polling -->
+  <brand_profile_http_url></brand_profile_http_url>
+  <!-- Polling interval for JEP-0025 HTTP polling, in milliseconds -->
+  <brand_profile_http_poll>1000</brand_profile_http_poll>
+  <!-- How many session keys to generate at a time for 
+       JEP-0025 HTTP polling -->
+  <brand_profile_num_poll_keys>256</brand_profile_num_poll_keys>
+  <!-- HTTP proxy approach.  Use IE=0, Direct=1, Custom=2 -->
+  <brand_profile_http_proxy_approach>0</brand_profile_http_proxy_approach>
+  <!-- Custom proxy hostname -->
+  <brand_profile_http_proxy_host></brand_profile_http_proxy_host>
+  <!-- Custom proxy port -->
+  <brand_profile_http_proxy_port>8080</brand_profile_http_proxy_port>
+  <!-- HTTP proxy requires login? -->
+  <brand_profile_http_proxy_auth>false</brand_profile_http_proxy_auth>
+  <!-- HTTP proxy username -->
+  <brand_profile_http_proxy_user></brand_profile_http_proxy_user>
+  <!-- HTTP proxy password -->
+  <brand_profile_http_proxy_password></brand_profile_http_proxy_password>
+
+  <!-- .ico file for window icons -->
+  <brand_icon></brand_icon>
+  <!-- Replace "Exodus" in the title bar -->
+  <brand_caption>Exodus</brand_caption>
+  <!-- A .bmp file that appears at the bottom of the roster -->
+  <brand_ad></brand_ad>
+  <!-- A URL that gets fired when the user clicks on the ad -->
+  <brand_ad_url></brand_ad_url>
+  <!-- The URL to check for auto-update of branding.xml file. -->
+  <branding_url></branding_url>
+  
+  <!-- Should the nickname be limited to the display name. Use a value='1' for Nickname lockdown -->
+  <brand_prevent_change_nick value="0"/>
+
+</brand>
